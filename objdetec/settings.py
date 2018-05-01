@@ -57,6 +57,7 @@ EMAIL_SUBJECT_PREFIX = '[objdetec] '
 # Application definition
 
 INSTALLED_APPS = [
+    'profiles',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
