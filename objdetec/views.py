@@ -24,3 +24,8 @@ from django.shortcuts import render
 @piwik('Dashboard • objdetec')
 def dashboard(request):
     return render(request, 'objdetec/dashboard.html', locals())
+
+
+@piwik('Imprint • objdetec')
+def imprint(request):
+    return render(request, 'objdetec/imprint.html', locals())
