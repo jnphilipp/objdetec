@@ -1,0 +1,30 @@
+{% extends "objdetec/base.html" %}
+{% load i18n %}
+
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url "dashboard" %}">{% trans "Dashboard" %}</a></li>
+<li class="breadcrumb-item active" aria-current="page">{% trans "NN Models" %}</li>
+{% endblock %}
+
+
+{% block content %}
+{% if user.is_authenticated %}
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <div class="float-right">
+            <a href="" class="btn btn-primary" role="button">{% trans "Add NN model" %}</a>
+        </div>
+    </div>
+</div>
+{% endif %}
+<div class="row mt-2">
+    <div class="col-md-10 offset-md-1">
+        {% if nnmodels %}
+            {% include "nnmodels/nnmodel/partials/_table.html" %}
+        {% else %}
+            <p>{% trans "There are no nn models available." %}</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

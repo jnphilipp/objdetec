@@ -48,6 +48,7 @@ urlpatterns = [
     path('imprint/', views.imprint, name='imprint'),
 
     path('admin/', admin.site.urls),
+    path('nnmodels/', include('nnmodels.urls')),
     path('profile/', include('profiles.urls')),
 
     path('favicon.ico', RedirectView.as_view(url='/static/images/icon.png')),

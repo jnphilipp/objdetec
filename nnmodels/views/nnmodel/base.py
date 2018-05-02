@@ -16,28 +16,23 @@
 # You should have received a copy of the GNU General Public License
 # along with objdetec.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.utils import timezone
-from objdetec.templatetags.objdetec import register
+from django.db.models import Q
+from django.shortcuts import get_object_or_404, render
+from nnmodels.models import NNModel
+from objdetec.decorators import piwik
 
 
-@register.filter
-def startswith(value, start):
-    return value.startswith(start)
-
-
-@register.filter
-def endswith(value, end):
-    return value.endswith(end)
-
-
-@register.filter
-def get_item(obj, key):
-    if type(obj) == list or type(obj) == tuple:
-        return obj[key]
+@piwik('NN Models • NN Models • objdetec')
+def list(request):
+    nnmodels = NNModel.objects.all()
+    if request.user.is_authenticated:
+        nnmodels = nnmodels.filter(Q(public=True) | Q(uploader=request.user))
     else:
-        return obj.get(key)
+        nnmodels = nnmodels.filter(public=True)
+    return render(request, 'nnmodels/nnmodel/list.html', locals())
 
 
-@register.simple_tag
-def timestamp(format_str):
-    return timezone.now().strftime(format_str)
+@piwik('NN Model • NN Models • objdetec')
+def detail(request, slug):
+    nnmodel = get_object_or_404(NNModel, slug=slug)
+    return render(request, 'nnmodels/nnmodel/detail.html', locals())

@@ -17,8 +17,8 @@
 # along with objdetec.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from objdetec.decorators import piwik
 from django.shortcuts import render
+from objdetec.decorators import piwik
 
 
 @piwik('Dashboard • objdetec')

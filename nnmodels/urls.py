@@ -16,28 +16,20 @@
 # You should have received a copy of the GNU General Public License
 # along with objdetec.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.utils import timezone
-from objdetec.templatetags.objdetec import register
+from django.urls import path
+from . import views
 
 
-@register.filter
-def startswith(value, start):
-    return value.startswith(start)
-
-
-@register.filter
-def endswith(value, end):
-    return value.endswith(end)
-
-
-@register.filter
-def get_item(obj, key):
-    if type(obj) == list or type(obj) == tuple:
-        return obj[key]
-    else:
-        return obj.get(key)
-
-
-@register.simple_tag
-def timestamp(format_str):
-    return timezone.now().strftime(format_str)
+app_name = 'nnmodels'
+urlpatterns = [
+    path('nnmodel/', views.nnmodel.list, name='nnmodels'),
+    path('nnmodel/<slug:slug>/', views.nnmodel.detail, name='nnmodel'),
+    path('nnmodel/<slug:slug>/<int:version_id>/', views.version.detail,
+         name='version'),
+    path('nnmodel/<slug:slug>/<int:version_id>/config/', views.version.config,
+         name='version_config'),
+    path('nnmodel/<slug:slug>/<int:version_id>/plot/', views.version.plot,
+         name='version_plot'),
+    path('nnmodel/<slug:slug>/<int:version_id>/charts/trainhistory/',
+         views.version.charts.trainhistory, name='version_chart_trainhistory'),
+]

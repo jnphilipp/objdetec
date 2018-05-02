@@ -16,28 +16,14 @@
 # You should have received a copy of the GNU General Public License
 # along with objdetec.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.utils import timezone
-from objdetec.templatetags.objdetec import register
+import os
+
+from django.template import Library
+
+
+register = Library()
 
 
 @register.filter
-def startswith(value, start):
-    return value.startswith(start)
-
-
-@register.filter
-def endswith(value, end):
-    return value.endswith(end)
-
-
-@register.filter
-def get_item(obj, key):
-    if type(obj) == list or type(obj) == tuple:
-        return obj[key]
-    else:
-        return obj.get(key)
-
-
-@register.simple_tag
-def timestamp(format_str):
-    return timezone.now().strftime(format_str)
+def basename(path):
+    return os.path.basename(path if type(path) == str else str(path))
