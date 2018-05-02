@@ -17,5 +17,15 @@
 # along with objdetec.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib import admin
+from django.utils.translation import ugettext_lazy as _
 
-# Register your models here.
+from .models import NNModel
+
+
+@admin.register(NNModel)
+class NNModelAdmin(admin.ModelAdmin):
+    fieldsets = [(None, {'fields': ['slug', 'name', 'public', 'uploader']})]
+    list_display = ('name', 'public', 'uploader')
+    list_filter = ('uploader',)
+    readonly_fields = ('slug',)
+    search_fields = ('name',)

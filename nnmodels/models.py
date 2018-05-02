@@ -16,6 +16,42 @@
 # You should have received a copy of the GNU General Public License
 # along with objdetec.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.conf import settings
 from django.db import models
+from django.template.defaultfilters import slugify
+from django.utils.translation import ugettext_lazy as _
+from objdetec.fields import SingleLineTextField
 
-# Create your models here.
+
+class NNModel(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True,
+                                      verbose_name=_('Created at'))
+    updated_at = models.DateTimeField(auto_now=True,
+                                      verbose_name=_('Updated at'))
+
+    slug = models.SlugField(unique=True, verbose_name=_('Slug'))
+    name = SingleLineTextField(unique=True, verbose_name=_('Name'))
+    public = models.BooleanField(default=True, verbose_name=_('Public'))
+    uploader = models.ForeignKey(settings.AUTH_USER_MODEL, models.CASCADE,
+                                 related_name='nnmodels',
+                                 verbose_name=_('Uploader'))
+
+    def get_absolute_url(self):
+        return reverse('nnmodels:nnmodel', args=[self.slug])
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        else:
+            orig = NNModel.objects.get(pk=self.id)
+            if orig.name != self.name:
+                self.slug = slugify(self.name)
+        super(NNModel, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ('name',)
+        verbose_name = _('NN Model')
+        verbose_name_plural = _('NN Models')
