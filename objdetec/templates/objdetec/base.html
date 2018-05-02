@@ -1,0 +1,116 @@
+{% load bootstrap i18n static objdetec %}
+{% get_current_language as LANGUAGE_CODE %}
+
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <link rel="shortcut icon" href="{% static "images/icon.png" %}"/>
+        {% bootstrap_css %}
+        {% bootstrap_js %}
+        <link rel="stylesheet" href="{% static "css/objdetec.css" %}"/>
+        <title>{% block title %}objdetec{% endblock %}</title>
+        {% block extrahead %}{% endblock %}
+        <script type="text/javascript">
+            function updateTime() {
+                var time = new Date();
+                var hours = time.getUTCHours();
+                var minutes = time.getUTCMinutes();
+                var seconds = time.getUTCSeconds();
+                $(".time").html((hours < 10 ? "0" : "") + hours + ":" + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds + " UTC");
+            }
+
+            $(document).ready(function() {
+                setInterval("updateTime()", 1000);
+            });
+        </script>
+    </head>
+    <body>
+        <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="">
+                <img alt="Brand" src="{% static "images/icon.png" %}" style="margin-top: -5px; height: 30px; display: inline-block; -webkit-filter: invert(100%) !important; filter: invert(100%) !important;"/> objdetec
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarContent" role="navbar">
+                <ul class="navbar-nav">
+                    <li class="nav-item timestamp">
+                        {% timestamp "%A, %d. %B %Y" %}<br>
+                        <span class="time">{% timestamp "%X" %} UTC</span>
+                    </li>
+                </ul>
+
+                <ul class="navbar-nav">
+                    {% if user.is_authenticated %}
+                    {% else %}
+                        <li class="nav-item">
+                            {% url "imprint" as imprint_url %}
+                            <a class="nav-link{% if request.path|startswith:imprint_url %} active{% endif %}" href="{{ imprint_url }}">
+                                {% trans "Imprint" %}
+                                {% if request.path|startswith:imprint_url %}<span class="sr-only">(current)</span>{% endif %}
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+
+                {% if user.is_authenticated %}
+                    <ul class="navbar-nav ml-auto">
+                        {% url "profiles:index" as profiles_index_url %}
+                        <li class="nav-item dropdown{% if request.path|startswith:profiles_index_url %} active{% endif %}">
+                            <a class="nav-link dropdown-toggle" href="#" id="profilesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <b>{{ user.get_short_name|default:user.get_username }}</b>
+                                {% if request.path|startswith:portfolio_url %}<span class="sr-only">(current)</span>{% endif %}
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="profilesDropdown">
+                                {% url "profiles:profile" as profiles_profile_url %}
+                                <a class="dropdown-item{% if request.path|startswith:profiles_profile_url %} active{% endif %}" href="{{ profiles_profile_url }}">
+                                    {% trans "Profile" %}
+                                    {% if request.path|startswith:profiles_profile_url %}<span class="sr-only">(current)</span>{% endif %}
+                                </a>
+                                {% if user.is_staff %}
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="{% url "admin:index" %}">{% trans "Admin" %}</a>
+                                {% endif %}
+                                <div class="dropdown-divider"></div>
+                                {% url "imprint" as imprint_url %}
+                                <a class="dropdown-item{% if request.path|startswith:imprint_url %} active{% endif %}" href="{{ imprint_url }}">
+                                    {% trans "Imprint" %}
+                                    {% if request.path|startswith:imprint_url %}<span class="sr-only">(current)</span>{% endif %}
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{% url "profiles:signout" %}">{% trans "Sign out" %}</a>
+                            </ul>
+                        </li>
+                    </ul>
+                {% else %}
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="btn btn-outline-primary" href="{% url "profiles:signin" %}" role="button">{% trans "Sign in" %}</a>
+                        </li>
+                    </ul>
+                {% endif %}
+            </div>
+        </nav>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-10 offset-md-1">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            {% block breadcrumbs %}{% endblock %}
+                        </ol>
+                    </nav>
+                    {% messages %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    {% block content %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
