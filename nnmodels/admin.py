@@ -19,7 +19,7 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
-from .models import NNModel
+from .models import NNModel, Version
 
 
 @admin.register(NNModel)
@@ -29,3 +29,12 @@ class NNModelAdmin(admin.ModelAdmin):
     list_filter = ('uploader',)
     readonly_fields = ('slug',)
     search_fields = ('name',)
+
+
+@admin.register(Version)
+class VersionAdmin(admin.ModelAdmin):
+    fieldsets = [(None, {'fields': ['nnmodel', 'name', 'model_file',
+                                    'trainhistory_file']})]
+    list_display = ('nnmodel', 'name', 'updated_at')
+    list_filter = ('nnmodel',)
+    search_fields = ('nnmodel__name', 'name')

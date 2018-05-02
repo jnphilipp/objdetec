@@ -16,11 +16,18 @@
 # You should have received a copy of the GNU General Public License
 # along with objdetec.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
+
 from django.conf import settings
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 from objdetec.fields import SingleLineTextField
+
+
+def get_file_path(instance, filename):
+    return os.path.join('nnmodels', str(instance.nnmodel.slug),
+                        slugify(instance.name), filename)
 
 
 class NNModel(models.Model):
@@ -55,3 +62,30 @@ class NNModel(models.Model):
         ordering = ('name',)
         verbose_name = _('NN Model')
         verbose_name_plural = _('NN Models')
+
+
+class Version(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True,
+                                      verbose_name=_('Created at'))
+    updated_at = models.DateTimeField(auto_now=True,
+                                      verbose_name=_('Updated at'))
+
+    nnmodel = models.ForeignKey(NNModel, models.CASCADE,
+                                related_name='versions',
+                                verbose_name=_('NN Model'))
+    name = SingleLineTextField(verbose_name=_('Name'))
+    model_file = models.FileField(upload_to=get_file_path,
+                                  max_length=4096,
+                                  verbose_name=_('Model file'))
+    trainhistory_file = models.FileField(upload_to=get_file_path, blank=True,
+                                         null=True, max_length=4096,
+                                         verbose_name=_('Train-history file'))
+
+    def __str__(self):
+        return '%s [%s]' % (self.nnmodel, self.name)
+
+    class Meta:
+        ordering = ('nnmodel', '-updated_at')
+        unique_together = ('nnmodel', 'name')
+        verbose_name = _('Version')
+        verbose_name_plural = _('Versions')
