@@ -60,6 +60,7 @@ EMAIL_SUBJECT_PREFIX = '[objdetec] '
 
 INSTALLED_APPS = [
     'django_bootstrap4',
+    'objdetec',
     'profiles',
     'django.contrib.admin',
     'django.contrib.auth',
