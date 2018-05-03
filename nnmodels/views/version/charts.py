@@ -18,8 +18,10 @@
 
 import json
 
-from django.http import HttpResponseNotFound, JsonResponse
+from django.http import (HttpResponseForbidden, HttpResponseNotFound,
+                         JsonResponse)
 from django.shortcuts import get_object_or_404
+from django.utils.translation import ugettext_lazy as _
 from nnmodels.models import NNModel, Version
 from objdetec.decorators import piwik
 
@@ -29,8 +31,12 @@ def trainhistory(request, slug, version_id):
     nnmodel = get_object_or_404(NNModel, slug=slug)
     version = get_object_or_404(Version, nnmodel=nnmodel, pk=version_id)
 
+    if not nnmodel.public and request.user != nnmodel.uploader:
+        msg = _('You are not allowed to access this NNModel.')
+        return HttpResponseForbidden(msg)
     if not version.trainhistory_file:
-        return HttpResponseNotFound('No nn model version has no train-history file.')
+        msg = _('No NNModel version has no train-history file.')
+        return HttpResponseNotFound(msg)
 
     series = []
     with open(version.trainhistory_file.path) as f:

@@ -81,6 +81,9 @@ class Version(models.Model):
                                          null=True, max_length=4096,
                                          verbose_name=_('Train-history file'))
 
+    def plot_file(self):
+        return '%s.png' % self.model_file
+
     def __str__(self):
         return '%s [%s]' % (self.nnmodel, self.name)
 

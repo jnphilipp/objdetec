@@ -48,6 +48,10 @@
                                     <dd class="col-md-4">{{ nnmodel.versions.first.name }}</dd>
                                     <dt class="col-md-2">{% trans "Last Modified" %}</dt>
                                     <dd class="col-md-4">{{ nnmodel.versions.first.updated_at|date:"r" }}</dd>
+                                    <dt class="col-md-2">{% trans "Inputs" %}</dt>
+                                    <dd class="col-md-4"><code>{{ nnmodel.versions.first|inputs }}</code></dd>
+                                    <dt class="col-md-2">{% trans "Outputs" %}</dt>
+                                    <dd class="col-md-4"><code>{{ nnmodel.versions.first|outputs }}</code></dd>
                                 </dl>
                             </div>
                         </div>
@@ -84,6 +88,8 @@
                                         <th>{% trans "Name" %}</th>
                                         <th>{% trans "Model file" %}</th>
                                         <th>{% trans "Train-history file" %}</th>
+                                        <th>{% trans "#Inputs" %}</th>
+                                        <th>{% trans "#Outputs" %}</th>
                                         <th>{% trans "Last modified" %}</th>
                                     </tr>
                                 </thead>
@@ -93,6 +99,8 @@
                                             <th><a href="{% url "nnmodels:version" nnmodel.slug version.pk %}">{{ version.name }}</a></th>
                                             <td>{{ version.model_file|basename }}</td>
                                             <td>{{ version.trainhistory_file|basename }}</td>
+                                            <td>{{ version|inputs|length }}</td>
+                                            <td>{{ version|outputs|length }}</td>
                                             <td>{{ version.updated_at|date:"r" }}</td>
                                         </tr>
                                     {% endfor %}

@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
                 ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Updated at')),
                 ('name', objdetec.fields.SingleLineTextField(verbose_name='Name')),
                 ('model_file', models.FileField(max_length=4096, upload_to=nnmodels.models.get_file_path, verbose_name='Model file')),
-                ('trainhistory_file', models.FileField(max_length=4096, upload_to=nnmodels.models.get_file_path, verbose_name='Train-history file')),
+                ('trainhistory_file', models.FileField(blank=True, max_length=4096, null=True, upload_to=nnmodels.models.get_file_path, verbose_name='Train-history file')),
                 ('nnmodel', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='versions', to='nnmodels.NNModel', verbose_name='NN Model')),
             ],
             options={

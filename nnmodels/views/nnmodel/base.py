@@ -17,7 +17,9 @@
 # along with objdetec.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.db.models import Q
+from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render
+from django.utils.translation import ugettext_lazy as _
 from nnmodels.models import NNModel
 from objdetec.decorators import piwik
 
@@ -35,4 +37,7 @@ def list(request):
 @piwik('NN Model • NN Models • objdetec')
 def detail(request, slug):
     nnmodel = get_object_or_404(NNModel, slug=slug)
+    if not nnmodel.public and request.user != nnmodel.uploader:
+        msg = _('You are not allowed to access this NNModel.')
+        return HttpResponseForbidden(msg)
     return render(request, 'nnmodels/nnmodel/detail.html', locals())

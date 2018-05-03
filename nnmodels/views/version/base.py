@@ -16,7 +16,12 @@
 # You should have received a copy of the GNU General Public License
 # along with objdetec.  If not, see <http://www.gnu.org/licenses/>.
 
+import json
+
+from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render
+from django.utils.translation import ugettext_lazy as _
+from nnmodels.keras_model import KerasModel
 from nnmodels.models import NNModel, Version
 from objdetec.decorators import piwik
 
@@ -25,6 +30,9 @@ from objdetec.decorators import piwik
 def detail(request, slug, version_id):
     nnmodel = get_object_or_404(NNModel, slug=slug)
     version = get_object_or_404(Version, nnmodel=nnmodel, pk=version_id)
+    if not nnmodel.public and request.user != nnmodel.uploader:
+        msg = _('You are not allowed to access this NNModel.')
+        return HttpResponseForbidden(msg)
     return render(request, 'nnmodels/version/detail.html', locals())
 
 
@@ -32,6 +40,10 @@ def detail(request, slug, version_id):
 def config(request, slug, version_id):
     nnmodel = get_object_or_404(NNModel, slug=slug)
     version = get_object_or_404(Version, nnmodel=nnmodel, pk=version_id)
+    model_config = json.dumps(KerasModel().get_config(version), indent=4)
+    if not nnmodel.public and request.user != nnmodel.uploader:
+        msg = _('You are not allowed to access this NNModel.')
+        return HttpResponseForbidden(msg)
     return render(request, 'nnmodels/version/config.html', locals())
 
 
@@ -39,4 +51,8 @@ def config(request, slug, version_id):
 def plot(request, slug, version_id):
     nnmodel = get_object_or_404(NNModel, slug=slug)
     version = get_object_or_404(Version, nnmodel=nnmodel, pk=version_id)
+    plot_url = KerasModel().plot(version)
+    if not nnmodel.public and request.user != nnmodel.uploader:
+        msg = _('You are not allowed to access this NNModel.')
+        return HttpResponseForbidden(msg)
     return render(request, 'nnmodels/version/plot.html', locals())

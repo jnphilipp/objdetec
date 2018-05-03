@@ -40,6 +40,10 @@
             <dd class="col-md-3"><a href="{% url "nnmodels:version_plot" nnmodel.slug version.pk %}">{% trans "Plot model" %}</a></dd>
             <dt class="col-md-3">{% trans "Train-history" %}</dt>
             <dd class="col-md-9">{{ version.trainhistory_file|basename }}</dd>
+            <dt class="col-md-3">{% trans "Inputs" %}</dt>
+            <dd class="col-md-9"><code>{{ version|inputs }}</code></dd>
+            <dt class="col-md-3">{% trans "Outputs" %}</dt>
+            <dd class="col-md-9"><code>{{ version|outputs }}</code></dd>
         </dl>
     </div>
 </div>

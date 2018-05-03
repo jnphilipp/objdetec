@@ -19,7 +19,7 @@
 import os
 
 from django.template import Library
-
+from nnmodels.keras_model import KerasModel
 
 register = Library()
 
@@ -27,3 +27,12 @@ register = Library()
 @register.filter
 def basename(path):
     return os.path.basename(path if type(path) == str else str(path))
+
+
+@register.filter
+def inputs(version):
+    return KerasModel().inputs(version)
+
+@register.filter
+def outputs(version):
+    return KerasModel().outputs(version)
