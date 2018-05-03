@@ -50,7 +50,7 @@ class NNModel(models.Model):
         if not self.slug:
             self.slug = slugify(self.name)
         else:
-            orig = NNModel.objects.get(pk=self.id)
+            orig = NNModel.objects.get(pk=self.pk)
             if orig.name != self.name:
                 self.slug = slugify(self.name)
         super(NNModel, self).save(*args, **kwargs)

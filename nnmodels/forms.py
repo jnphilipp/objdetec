@@ -16,4 +16,17 @@
 # You should have received a copy of the GNU General Public License
 # along with objdetec.  If not, see <http://www.gnu.org/licenses/>.
 
-from .base import list, detail, add, edit
+from django import forms
+from django.utils.translation import ugettext_lazy as _
+
+from .models import NNModel
+
+
+class NNModelForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(NNModelForm, self).__init__(*args, **kwargs)
+        self.fields['uploader'].widget = forms.HiddenInput()
+
+    class Meta:
+        model = NNModel
+        fields = ('name', 'public', 'uploader')

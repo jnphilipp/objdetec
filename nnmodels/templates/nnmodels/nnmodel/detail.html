@@ -18,99 +18,107 @@
 
 {% block content %}
 {% if user.is_authenticated and nnmodel.uploader == user %}
-<div class="row">
-    <div class="col-md-10 offset-md-1">
-        <div class="float-right">
-            <a href="" class="btn btn-primary" role="button">{% trans "Edit NN model" %}</a>
-            <a href="" class="btn btn-primary" role="button">{% trans "Add new version" %}</a>
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <div class="float-right">
+                <a href="{% url "nnmodels:nnmodel_edit" nnmodel.slug %}" class="btn btn-primary" role="button">{% trans "Edit NN model" %}</a>
+                <a href="" class="btn btn-primary" role="button">{% trans "Add new version" %}</a>
+            </div>
         </div>
     </div>
-</div>
 {% endif %}
-<div class="row mt-2">
-    <div class="col-md-10 offset-md-1">
-        <div id="accordion">
-            <div class="card">
-                <div class="card-header" id="headingLatestVersion">
-                    <h5 class="mb-0">
-                        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseLatestVersion" aria-expanded="true" aria-controls="collapseLatestVersion">
-                            {% trans "Latest version" %}
-                        </button>
-                        <a class="btn btn-link float-right" href="{% url "nnmodels:version" nnmodel.slug nnmodel.versions.first.pk %}">{% trans "View" %}</a>
-                    </h5>
-                </div>
-                <div id="collapseLatestVersion" class="collapse show" aria-labelledby="headingLatestVersion" data-parent="#accordion">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <dl class="row">
-                                    <dt class="col-md-2">{% trans "Name" %}</dt>
-                                    <dd class="col-md-4">{{ nnmodel.versions.first.name }}</dd>
-                                    <dt class="col-md-2">{% trans "Last Modified" %}</dt>
-                                    <dd class="col-md-4">{{ nnmodel.versions.first.updated_at|date:"r" }}</dd>
-                                    <dt class="col-md-2">{% trans "Inputs" %}</dt>
-                                    <dd class="col-md-4"><code>{{ nnmodel.versions.first|inputs }}</code></dd>
-                                    <dt class="col-md-2">{% trans "Outputs" %}</dt>
-                                    <dd class="col-md-4"><code>{{ nnmodel.versions.first|outputs }}</code></dd>
-                                </dl>
-                            </div>
-                        </div>
-                        {% if nnmodel.versions.first.trainhistory_file %}
+{% if nnmodel.versions.all %}
+    <div class="row mt-2">
+        <div class="col-md-10 offset-md-1">
+            <div id="accordion">
+                <div class="card">
+                    <div class="card-header" id="headingLatestVersion">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link" data-toggle="collapse" data-target="#collapseLatestVersion" aria-expanded="true" aria-controls="collapseLatestVersion">
+                                {% trans "Latest version" %}
+                            </button>
+                            <a class="btn btn-link float-right" href="{% url "nnmodels:version" nnmodel.slug nnmodel.versions.first.pk %}">{% trans "View" %}</a>
+                        </h5>
+                    </div>
+                    <div id="collapseLatestVersion" class="collapse show" aria-labelledby="headingLatestVersion" data-parent="#accordion">
+                        <div class="card-body">
                             <div class="row">
-                                <div class="col-md-12 mt-md-2">
-                                    <div id="trainhistchart" style="min-width: 310px; height: 600px;"></div>
-                                    <script type="text/javascript">
-                                        $(document).ready(function() {
-                                            var chart_url = "{% url "nnmodels:version_chart_trainhistory" nnmodel.slug nnmodel.versions.first.pk %}";
-                                            trainhistory_chart(chart_url, "trainhistchart");
-                                        });
-                                    </script>
+                                <div class="col-md-12">
+                                    <dl class="row">
+                                        <dt class="col-md-2">{% trans "Name" %}</dt>
+                                        <dd class="col-md-4">{{ nnmodel.versions.first.name }}</dd>
+                                        <dt class="col-md-2">{% trans "Last Modified" %}</dt>
+                                        <dd class="col-md-4">{{ nnmodel.versions.first.updated_at|date:"r" }}</dd>
+                                        <dt class="col-md-2">{% trans "Inputs" %}</dt>
+                                        <dd class="col-md-4"><code>{{ nnmodel.versions.first|inputs }}</code></dd>
+                                        <dt class="col-md-2">{% trans "Outputs" %}</dt>
+                                        <dd class="col-md-4"><code>{{ nnmodel.versions.first|outputs }}</code></dd>
+                                    </dl>
                                 </div>
                             </div>
-                        {% endif %}
+                            {% if nnmodel.versions.first.trainhistory_file %}
+                                <div class="row">
+                                    <div class="col-md-12 mt-md-2">
+                                        <div id="trainhistchart" style="min-width: 310px; height: 600px;"></div>
+                                        <script type="text/javascript">
+                                            $(document).ready(function() {
+                                                var chart_url = "{% url "nnmodels:version_chart_trainhistory" nnmodel.slug nnmodel.versions.first.pk %}";
+                                                trainhistory_chart(chart_url, "trainhistchart");
+                                            });
+                                        </script>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="card">
-                <div class="card-header" id="headingVersions">
-                    <h5 class="mb-0">
-                        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseVersions" aria-expanded="false" aria-controls="collapseVersions">
-                            {% trans "Versions" %}
-                        </button>
-                    </h5>
-                </div>
-                <div id="collapseVersions" class="collapse" aria-labelledby="headingVersions" data-parent="#accordion">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>{% trans "Name" %}</th>
-                                        <th>{% trans "Model file" %}</th>
-                                        <th>{% trans "Train-history file" %}</th>
-                                        <th>{% trans "#Inputs" %}</th>
-                                        <th>{% trans "#Outputs" %}</th>
-                                        <th>{% trans "Last modified" %}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for version in nnmodel.versions.all %}
+                <div class="card">
+                    <div class="card-header" id="headingVersions">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link" data-toggle="collapse" data-target="#collapseVersions" aria-expanded="false" aria-controls="collapseVersions">
+                                {% trans "Versions" %}
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="collapseVersions" class="collapse" aria-labelledby="headingVersions" data-parent="#accordion">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover table-striped">
+                                    <thead>
                                         <tr>
-                                            <th><a href="{% url "nnmodels:version" nnmodel.slug version.pk %}">{{ version.name }}</a></th>
-                                            <td>{{ version.model_file|basename }}</td>
-                                            <td>{{ version.trainhistory_file|basename }}</td>
-                                            <td>{{ version|inputs|length }}</td>
-                                            <td>{{ version|outputs|length }}</td>
-                                            <td>{{ version.updated_at|date:"r" }}</td>
+                                            <th>{% trans "Name" %}</th>
+                                            <th>{% trans "Model file" %}</th>
+                                            <th>{% trans "Train-history file" %}</th>
+                                            <th>{% trans "#Inputs" %}</th>
+                                            <th>{% trans "#Outputs" %}</th>
+                                            <th>{% trans "Last modified" %}</th>
                                         </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        {% for version in nnmodel.versions.all %}
+                                            <tr>
+                                                <th><a href="{% url "nnmodels:version" nnmodel.slug version.pk %}">{{ version.name }}</a></th>
+                                                <td>{{ version.model_file|basename }}</td>
+                                                <td>{{ version.trainhistory_file|basename }}</td>
+                                                <td>{{ version|inputs|length }}</td>
+                                                <td>{{ version|outputs|length }}</td>
+                                                <td>{{ version.updated_at|date:"r" }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+{% else %}
+    <div class="row mt-2">
+        <div class="col-md-10 offset-md-1">
+            <p>{% trans "This NNModel has no versions." %}</p>
+        </div>
+    </div>
+{% endif %}
 {% endblock %}

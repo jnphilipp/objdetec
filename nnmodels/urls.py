@@ -23,7 +23,10 @@ from . import views
 app_name = 'nnmodels'
 urlpatterns = [
     path('nnmodel/', views.nnmodel.list, name='nnmodels'),
+    path('nnmodel/add/', views.nnmodel.add, name='nnmodel_add'),
     path('nnmodel/<slug:slug>/', views.nnmodel.detail, name='nnmodel'),
+    path('nnmodel/<slug:slug>/edit/', views.nnmodel.edit,
+         name='nnmodel_edit'),
     path('nnmodel/<slug:slug>/<int:version_id>/', views.version.detail,
          name='version'),
     path('nnmodel/<slug:slug>/<int:version_id>/config/', views.version.config,

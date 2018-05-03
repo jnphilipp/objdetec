@@ -16,10 +16,14 @@
 # You should have received a copy of the GNU General Public License
 # along with objdetec.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import HttpResponseForbidden
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import ugettext_lazy as _
+from django.views.decorators.csrf import csrf_protect
+from nnmodels.forms import NNModelForm
 from nnmodels.models import NNModel
 from objdetec.decorators import piwik
 
@@ -41,3 +45,39 @@ def detail(request, slug):
         msg = _('You are not allowed to access this NNModel.')
         return HttpResponseForbidden(msg)
     return render(request, 'nnmodels/nnmodel/detail.html', locals())
+
+
+@csrf_protect
+@login_required
+@piwik('Add NN Model • NN Models • objdetec')
+def add(request):
+    if request.method == 'POST':
+        form = NNModelForm(request.POST)
+        if form.is_valid():
+            nnmodel = form.save()
+            msg = _('NNModel "%(name)s" successfully created.')
+            messages.add_message(request, messages.SUCCESS,
+                                 msg % {'name': nnmodel.name})
+            return redirect('nnmodels:nnmodel', slug=nnmodel.slug)
+    else:
+        form = NNModelForm(initial={'uploader': request.user})
+    return render(request, 'nnmodels/nnmodel/form.html', locals())
+
+
+@csrf_protect
+@login_required
+@piwik('Edit • NN Model • NN Models • objdetec')
+def edit(request, slug):
+    nnmodel = get_object_or_404(NNModel, slug=slug)
+
+    if request.method == 'POST':
+        form = NNModelForm(instance=nnmodel, data=request.POST)
+        if form.is_valid():
+            nnmodel = form.save()
+            msg = _('NNModel "%(name)s" successfully updated.')
+            messages.add_message(request, messages.SUCCESS,
+                                 msg % {'name': nnmodel.name})
+            return redirect('nnmodels:nnmodel', slug=nnmodel.slug)
+    else:
+        form = NNModelForm(instance=nnmodel)
+    return render(request, 'nnmodels/nnmodel/form.html', locals())
