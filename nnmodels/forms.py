@@ -19,7 +19,7 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from .models import NNModel
+from .models import NNModel, Version
 
 
 class NNModelForm(forms.ModelForm):
@@ -30,3 +30,13 @@ class NNModelForm(forms.ModelForm):
     class Meta:
         model = NNModel
         fields = ('name', 'public', 'uploader')
+
+
+class VersionForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(VersionForm, self).__init__(*args, **kwargs)
+        self.fields['nnmodel'].widget = forms.HiddenInput()
+
+    class Meta:
+        model = Version
+        fields = ('nnmodel', 'name', 'model_file', 'trainhistory_file')

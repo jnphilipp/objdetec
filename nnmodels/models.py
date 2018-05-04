@@ -84,6 +84,26 @@ class Version(models.Model):
     def plot_file(self):
         return '%s.png' % self.model_file
 
+    def save(self, *args, **kwargs):
+        if self.pk:
+            orig = Version.objects.get(pk=self.pk)
+            if orig.model_file != self.model_file:
+                path = os.path.join(settings.MEDIA_ROOT, orig.plot_file())
+                if os.path.exists(path):
+                    os.remove(path)
+
+                path = os.path.join(settings.MEDIA_ROOT,
+                                    orig.model_file.name)
+                if os.path.exists(path):
+                    os.remove(path)
+            if orig.trainhistory_file and \
+                    orig.trainhistory_file != self.trainhistory_file:
+                path = os.path.join(settings.MEDIA_ROOT,
+                                    orig.trainhistory_file.name)
+                if os.path.exists(path):
+                    os.remove(path)
+        super(Version, self).save(*args, **kwargs)
+
     def __str__(self):
         return '%s [%s]' % (self.nnmodel, self.name)
 

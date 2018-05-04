@@ -69,9 +69,12 @@ def add(request):
 @piwik('Edit • NN Model • NN Models • objdetec')
 def edit(request, slug):
     nnmodel = get_object_or_404(NNModel, slug=slug)
+    if request.user != nnmodel.uploader:
+        msg = _('You are not allowed to access this NNModel.')
+        return HttpResponseForbidden(msg)
 
     if request.method == 'POST':
-        form = NNModelForm(instance=nnmodel, data=request.POST)
+        form = NNModelForm(request.POST, instance=nnmodel)
         if form.is_valid():
             nnmodel = form.save()
             msg = _('NNModel "%(name)s" successfully updated.')

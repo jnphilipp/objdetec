@@ -18,9 +18,13 @@
 
 import json
 
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import ugettext_lazy as _
+from django.views.decorators.csrf import csrf_protect
+from nnmodels.forms import VersionForm
 from nnmodels.keras_model import KerasModel
 from nnmodels.models import NNModel, Version
 from objdetec.decorators import piwik
@@ -56,3 +60,54 @@ def plot(request, slug, version_id):
         msg = _('You are not allowed to access this NNModel.')
         return HttpResponseForbidden(msg)
     return render(request, 'nnmodels/version/plot.html', locals())
+
+
+@csrf_protect
+@login_required
+@piwik('Add Version • NN Model • NN Models • objdetec')
+def add(request, slug):
+    nnmodel = get_object_or_404(NNModel, slug=slug)
+    if request.user != nnmodel.uploader:
+        msg = _('You are not allowed to access this NNModel.')
+        return HttpResponseForbidden(msg)
+
+    if request.method == 'POST':
+        form = VersionForm(request.POST, request.FILES)
+        if form.is_valid():
+            version = form.save()
+            msg = _('Version %(version)s for NNModel "%(nnmodel)s" '
+                    'successfully created.')
+            messages.add_message(request, messages.SUCCESS,
+                                 msg % {'version': version.name,
+                                        'nnmodel': nnmodel.name})
+            return redirect('nnmodels:version', slug=nnmodel.slug,
+                            version_id=version.pk)
+    else:
+        form = VersionForm(initial={'nnmodel': nnmodel})
+    return render(request, 'nnmodels/version/form.html', locals())
+
+
+@csrf_protect
+@login_required
+@piwik('Edit • Version • NN Model • NN Models • objdetec')
+def edit(request, slug, version_id):
+    nnmodel = get_object_or_404(NNModel, slug=slug)
+    version = get_object_or_404(Version, nnmodel=nnmodel, pk=version_id)
+    if request.user != nnmodel.uploader:
+        msg = _('You are not allowed to access this NNModel.')
+        return HttpResponseForbidden(msg)
+
+    if request.method == 'POST':
+        form = VersionForm(request.POST, request.FILES, instance=version)
+        if form.is_valid():
+            version = form.save()
+            msg = _('Version %(version)s for NNModel "%(nnmodel)s" '
+                    'successfully updated.')
+            messages.add_message(request, messages.SUCCESS,
+                                 msg % {'version': version.name,
+                                        'nnmodel': nnmodel.name})
+            return redirect('nnmodels:version', slug=nnmodel.slug,
+                            version_id=version.pk)
+    else:
+        form = VersionForm(instance=version)
+    return render(request, 'nnmodels/version/form.html', locals())

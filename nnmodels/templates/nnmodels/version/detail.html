@@ -22,7 +22,7 @@
 <div class="row">
     <div class="col-md-10 offset-md-1">
         <div class="float-right">
-            <a href="" class="btn btn-primary" role="button">{% trans "Edit Version" %}</a>
+            <a href="{% url "nnmodels:version_edit" nnmodel.slug version.pk %}" class="btn btn-primary" role="button">{% trans "Edit Version" %}</a>
         </div>
     </div>
 </div>
