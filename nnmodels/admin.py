@@ -26,7 +26,7 @@ from .models import NNModel, Version
 class NNModelAdmin(admin.ModelAdmin):
     fieldsets = [(None, {'fields': ['slug', 'name', 'public', 'uploader']})]
     list_display = ('name', 'public', 'uploader')
-    list_filter = ('uploader',)
+    list_filter = ('public', 'uploader')
     readonly_fields = ('slug',)
     search_fields = ('name',)
 
