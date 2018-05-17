@@ -93,7 +93,7 @@
                 {% else %}
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item">
-                            <a class="btn btn-outline-primary" href="{% url "profiles:signin" %}" role="button">{% trans "Sign in" %}</a>
+                            <a class="btn btn-outline-primary" href="{% url "profiles:signin" %}?next={{ request.path }}" role="button">{% trans "Sign in" %}</a>
                         </li>
                     </ul>
                 {% endif %}
