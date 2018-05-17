@@ -16,6 +16,53 @@
 # You should have received a copy of the GNU General Public License
 # along with objdetec.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.db import models
+import os
 
-# Create your models here.
+from django.conf import settings
+from django.db import models
+from django.template.defaultfilters import slugify
+from django.utils.translation import ugettext_lazy as _
+from objdetec.fields import SingleLineTextField
+
+
+def get_image_path(instance, filename):
+    name = slugify(instance.name) + os.path.splitext(filename)[1]
+    return os.path.join('images', name)
+
+
+class Image(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True,
+                                      verbose_name=_('Created at'))
+    updated_at = models.DateTimeField(auto_now=True,
+                                      verbose_name=_('Updated at'))
+
+    slug = models.SlugField(unique=True, verbose_name=_('Slug'))
+    name = SingleLineTextField(unique=True, verbose_name=_('Name'))
+    public = models.BooleanField(default=True, verbose_name=_('Public'))
+    image = models.FileField(upload_to=get_image_path, max_length=4096,
+                             verbose_name=_('Image'))
+    uploader = models.ForeignKey(settings.AUTH_USER_MODEL, models.CASCADE,
+                                 related_name='images',
+                                 verbose_name=_('Uploader'))
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        else:
+            orig = Image.objects.get(pk=self.pk)
+            if orig.name != self.name:
+                self.slug = slugify(self.name)
+                path = os.path.join(settings.MEDIA_ROOT, orig.plot_file())
+            if orig.image != self.image:
+                path = os.path.join(settings.MEDIA_ROOT, orig.image.name)
+                if os.path.exists(path):
+                    os.remove(path)
+        super(Image, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ('name',)
+        verbose_name = _('Image')
+        verbose_name_plural = _('Images')
