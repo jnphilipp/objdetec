@@ -49,6 +49,11 @@
                         {% trans "NN Models" %}
                         {% if request.path|startswith:nnmodels_url %}<span class="sr-only">(current)</span>{% endif %}
                     </a>
+                    {% url "images:images" as images_url %}
+                    <a class="nav-link{% if request.path|startswith:images_url %} active{% endif %}" href="{{ images_url }}">
+                        {% trans "Images" %}
+                        {% if request.path|startswith:images_url %}<span class="sr-only">(current)</span>{% endif %}
+                    </a>
                     {% if user.is_authenticated %}
                     {% else %}
                         <li class="nav-item">

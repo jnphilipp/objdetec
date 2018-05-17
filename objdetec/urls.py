@@ -48,6 +48,7 @@ urlpatterns = [
     path('imprint/', views.imprint, name='imprint'),
 
     path('admin/', admin.site.urls),
+    path('images/', include('images.urls')),
     path('nnmodels/', include('nnmodels.urls')),
     path('profile/', include('profiles.urls')),
 

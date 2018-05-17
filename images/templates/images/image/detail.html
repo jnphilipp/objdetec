@@ -1,0 +1,39 @@
+{% extends "objdetec/base.html" %}
+{% load i18n %}
+
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url "dashboard" %}">{% trans "Dashboard" %}</a></li>
+<li class="breadcrumb-item"><a href="{% url "images:images" %}">{% trans "Images" %}</a></li>
+<li class="breadcrumb-item active" aria-current="page">{{ image.name }}</li>
+{% endblock %}
+
+
+{% block content %}
+{% if user.is_authenticated and image.uploader == user %}
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <div class="float-right">
+                <a href="" class="btn btn-primary" role="button">{% trans "Edit image" %}</a>
+            </div>
+        </div>
+    </div>
+{% endif %}
+<div class="row mt-2">
+    <div class="col-md-10">
+        <img class="img-fluid img-thumbnail" src="{{ image.image.url }}">
+    </div>
+    <div class="col-md-2">
+        <div class="row">
+            <div class="col">
+                <h4>#{% trans "History" %}</h4>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <h4>#{% trans "NN Models" %}</h4>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
