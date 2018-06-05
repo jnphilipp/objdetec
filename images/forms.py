@@ -16,14 +16,17 @@
 # You should have received a copy of the GNU General Public License
 # along with objdetec.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.urls import path
-from . import views
+from django import forms
+from django.utils.translation import ugettext_lazy as _
+
+from .models import Image
 
 
-app_name = 'images'
-urlpatterns = [
-    path('image/', views.list, name='images'),
-    path('image/add/', views.add, name='image_add'),
-    path('image/<slug:slug>/', views.detail, name='image'),
-    path('image/<slug:slug>/edit/', views.edit, name='image_edit'),
-]
+class ImageForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(ImageForm, self).__init__(*args, **kwargs)
+        self.fields['uploader'].widget = forms.HiddenInput()
+
+    class Meta:
+        model = Image
+        fields = ('name', 'public', 'image', 'uploader')

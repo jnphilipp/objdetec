@@ -1,0 +1,24 @@
+{% extends "objdetec/base.html" %}
+{% load bootstrap i18n %}
+
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url "dashboard" %}">{% trans "Dashboard" %}</a></li>
+<li class="breadcrumb-item"><a href="{% url "images:images" %}">{% trans "Images" %}</a></li>
+{% if image %}
+    <li class="breadcrumb-item"><a href="{% url "images:image" image.slug %}">{{ image.name }}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{% trans "Edit" %}</li>
+{% else %}
+    <li class="breadcrumb-item active" aria-current="page">{% trans "Add" %}</li>
+{% endif %}
+{% endblock %}
+
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        {% trans "Save" as save_trans %}
+        {% bootstrap_form form=form btn_title=save_trans enctype="multipart/form-data" %}
+    </div>
+</div>
+{% endblock %}
