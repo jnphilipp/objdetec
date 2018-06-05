@@ -71,6 +71,7 @@
                         {% url "profiles:index" as profiles_index_url %}
                         <li class="nav-item dropdown{% if request.path|startswith:profiles_index_url %} active{% endif %}">
                             <a class="nav-link dropdown-toggle" href="#" id="profilesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {% gravatar_img 30 classes="rounded-circle" %}
                                 <b>{{ user.get_short_name|default:user.get_username }}</b>
                                 {% if request.path|startswith:portfolio_url %}<span class="sr-only">(current)</span>{% endif %}
                             </a>
