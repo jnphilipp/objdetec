@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'nnmodels',
     'objdetec',
     'profiles',
+    'results',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
