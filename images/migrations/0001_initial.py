@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
                 ('slug', models.SlugField(unique=True, verbose_name='Slug')),
                 ('name', objdetec.fields.SingleLineTextField(unique=True, verbose_name='Name')),
                 ('public', models.BooleanField(default=True, verbose_name='Public')),
-                ('image', models.FileField(max_length=4096, upload_to=images.models.get_image_path, verbose_name='Image')),
+                ('image', models.ImageField(max_length=4096, upload_to=images.models.get_image_path, verbose_name='Image')),
                 ('uploader', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='images', to=settings.AUTH_USER_MODEL, verbose_name='Uploader')),
             ],
             options={

@@ -39,8 +39,8 @@ class Image(models.Model):
     slug = models.SlugField(unique=True, verbose_name=_('Slug'))
     name = SingleLineTextField(unique=True, verbose_name=_('Name'))
     public = models.BooleanField(default=True, verbose_name=_('Public'))
-    image = models.FileField(upload_to=get_image_path, max_length=4096,
-                             verbose_name=_('Image'))
+    image = models.ImageField(upload_to=get_image_path, max_length=4096,
+                              verbose_name=_('Image'))
     uploader = models.ForeignKey(settings.AUTH_USER_MODEL, models.CASCADE,
                                  related_name='images',
                                  verbose_name=_('Uploader'))
