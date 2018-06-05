@@ -33,6 +33,12 @@ def basename(path):
 def inputs(version):
     return KerasModel().inputs(version)
 
+
 @register.filter
 def outputs(version):
     return KerasModel().outputs(version)
+
+
+@register.filter
+def parameter_count(version):
+    return KerasModel().parameter_count(version)

@@ -1,5 +1,5 @@
 {% extends "objdetec/base.html" %}
-{% load i18n nnmodels static %}
+{% load i18n nnmodels objdetec static %}
 
 
 {% block extrahead %}
@@ -44,6 +44,14 @@
             <dd class="col-md-9"><code>{{ version|inputs }}</code></dd>
             <dt class="col-md-3">{% trans "Outputs" %}</dt>
             <dd class="col-md-9"><code>{{ version|outputs }}</code></dd>
+            {% with params=version|parameter_count %}
+                <dt class="col-md-3">{% trans "Total params" %}</dt>
+                <dd class="col-md-9">{{ params|get_item:"total" }}</dd>
+                <dt class="col-md-3">{% trans "Trainable params" %}</dt>
+                <dd class="col-md-9">{{ params|get_item:"trainable" }}</dd>
+                <dt class="col-md-3">{% trans "Non-trainable params" %}</dt>
+                <dd class="col-md-9">{{ params|get_item:"non-trainable" }}</dd>
+            {% endwith %}
         </dl>
     </div>
 </div>
