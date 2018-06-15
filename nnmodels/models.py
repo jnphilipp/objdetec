@@ -38,6 +38,8 @@ class NNModel(models.Model):
 
     slug = models.SlugField(unique=True, verbose_name=_('Slug'))
     name = SingleLineTextField(unique=True, verbose_name=_('Name'))
+    description = models.TextField(blank=True, null=True,
+                                   verbose_name=_('Description'))
     public = models.BooleanField(default=True, verbose_name=_('Public'))
     uploader = models.ForeignKey(settings.AUTH_USER_MODEL, models.CASCADE,
                                  related_name='nnmodels',

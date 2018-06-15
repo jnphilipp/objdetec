@@ -24,7 +24,8 @@ from .models import NNModel, Version
 
 @admin.register(NNModel)
 class NNModelAdmin(admin.ModelAdmin):
-    fieldsets = [(None, {'fields': ['slug', 'name', 'public', 'uploader']})]
+    fieldsets = [(None, {'fields': ['slug', 'name', 'description', 'public',
+                                    'uploader']})]
     list_display = ('name', 'public', 'uploader')
     list_filter = ('public', 'uploader')
     readonly_fields = ('slug',)

@@ -40,6 +40,7 @@ class Migration(migrations.Migration):
                 ('updated_at', models.DateTimeField(auto_now=True, verbose_name='Updated at')),
                 ('slug', models.SlugField(unique=True, verbose_name='Slug')),
                 ('name', objdetec.fields.SingleLineTextField(unique=True, verbose_name='Name')),
+                ('description', models.TextField(blank=True, null=True, verbose_name='Description')),
                 ('public', models.BooleanField(default=True, verbose_name='Public')),
                 ('uploader', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='nnmodels', to=settings.AUTH_USER_MODEL, verbose_name='Uploader')),
             ],

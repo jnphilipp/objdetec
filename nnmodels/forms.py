@@ -29,7 +29,7 @@ class NNModelForm(forms.ModelForm):
 
     class Meta:
         model = NNModel
-        fields = ('name', 'public', 'uploader')
+        fields = ('name', 'description', 'public', 'uploader')
 
 
 class VersionForm(forms.ModelForm):

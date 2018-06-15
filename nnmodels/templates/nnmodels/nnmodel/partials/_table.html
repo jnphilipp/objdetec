@@ -6,6 +6,7 @@
         <thead>
             <tr>
                 <th>{% trans "Name" %}</th>
+                <th>{% trans "Description" %}</th>
                 <th>{% trans "#Version" %}</th>
             </tr>
         </thead>
@@ -13,6 +14,11 @@
             {% for nnmodel in nnmodels %}
                 <tr>
                     <th><a href="{% url "nnmodels:nnmodel" nnmodel.slug %}">{{ nnmodel.name }}</a></th>
+                    <td>
+                        {% if nnmodel.description %}
+                            {% autoescape off %}{{ nnmodel.description }}{% endautoescape %}
+                        {% endif %}
+                    </td>
                     <td>{{ nnmodel.versions.count }}</td>
                 </tr>
             {% endfor %}

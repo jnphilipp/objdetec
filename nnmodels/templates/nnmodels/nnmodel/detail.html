@@ -24,6 +24,9 @@
                 <a href="{% url "nnmodels:nnmodel_edit" nnmodel.slug %}" class="btn btn-primary" role="button">{% trans "Edit NN model" %}</a>
                 <a href="{% url "nnmodels:version_add" nnmodel.slug %}" class="btn btn-primary" role="button">{% trans "Add new version" %}</a>
             </div>
+            {% if nnmodel.description %}
+                {% autoescape off %}{{ nnmodel.description }}{% endautoescape %}
+            {% endif %}
         </div>
     </div>
 {% endif %}
