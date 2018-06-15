@@ -19,7 +19,6 @@
 import os
 
 from django.template import Library
-from nnmodels.keras_model import KerasModel
 
 register = Library()
 
@@ -30,15 +29,12 @@ def basename(path):
 
 
 @register.filter
-def inputs(version):
-    return KerasModel().inputs(version)
-
-
-@register.filter
-def outputs(version):
-    return KerasModel().outputs(version)
-
-
-@register.filter
-def parameter_count(version):
-    return KerasModel().parameter_count(version)
+def total_params(version):
+    if version.nb_trainable is None and version.nb_non_trainable is None:
+        return None
+    elif version.nb_trainable is not None and version.nb_non_trainable is None:
+        return version.nb_trainable
+    elif version.nb_trainable is None and version.nb_non_trainable is not None:
+        return version.nb_non_trainable
+    else:
+        return version.nb_trainable + version.nb_non_trainable

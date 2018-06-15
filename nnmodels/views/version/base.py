@@ -25,7 +25,6 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
 from nnmodels.forms import VersionForm
-from nnmodels.keras_model import KerasModel
 from nnmodels.models import NNModel, Version
 from objdetec.decorators import piwik
 
@@ -44,7 +43,7 @@ def detail(request, slug, version_id):
 def config(request, slug, version_id):
     nnmodel = get_object_or_404(NNModel, slug=slug)
     version = get_object_or_404(Version, nnmodel=nnmodel, pk=version_id)
-    model_config = json.dumps(KerasModel().get_config(version), indent=4)
+    model_config = json.dumps(version.config, indent=4)
     if not nnmodel.public and request.user != nnmodel.uploader:
         msg = _('You are not allowed to access this NNModel.')
         return HttpResponseForbidden(msg)
@@ -55,7 +54,6 @@ def config(request, slug, version_id):
 def plot(request, slug, version_id):
     nnmodel = get_object_or_404(NNModel, slug=slug)
     version = get_object_or_404(Version, nnmodel=nnmodel, pk=version_id)
-    plot_url = KerasModel().plot(version)
     if not nnmodel.public and request.user != nnmodel.uploader:
         msg = _('You are not allowed to access this NNModel.')
         return HttpResponseForbidden(msg)

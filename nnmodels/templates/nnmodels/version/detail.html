@@ -1,5 +1,5 @@
 {% extends "objdetec/base.html" %}
-{% load i18n nnmodels objdetec static %}
+{% load humanize i18n nnmodels objdetec static %}
 
 
 {% block extrahead %}
@@ -41,17 +41,15 @@
             <dt class="col-md-3">{% trans "Train-history" %}</dt>
             <dd class="col-md-9">{{ version.trainhistory_file|basename }}</dd>
             <dt class="col-md-3">{% trans "Inputs" %}</dt>
-            <dd class="col-md-9"><code>{{ version|inputs }}</code></dd>
+            <dd class="col-md-9"><code>{{ version.inputs }}</code></dd>
             <dt class="col-md-3">{% trans "Outputs" %}</dt>
-            <dd class="col-md-9"><code>{{ version|outputs }}</code></dd>
-            {% with params=version|parameter_count %}
-                <dt class="col-md-3">{% trans "Total params" %}</dt>
-                <dd class="col-md-9">{{ params|get_item:"total" }}</dd>
-                <dt class="col-md-3">{% trans "Trainable params" %}</dt>
-                <dd class="col-md-9">{{ params|get_item:"trainable" }}</dd>
-                <dt class="col-md-3">{% trans "Non-trainable params" %}</dt>
-                <dd class="col-md-9">{{ params|get_item:"non-trainable" }}</dd>
-            {% endwith %}
+            <dd class="col-md-9"><code>{{ version.outputs }}</code></dd>
+            <dt class="col-md-3">{% trans "Total params" %}</dt>
+            <dd class="col-md-9">{{ version|total_params|intcomma }}</dd>
+            <dt class="col-md-3">{% trans "Trainable params" %}</dt>
+            <dd class="col-md-9">{{ version.nb_trainable|intcomma }}</dd>
+            <dt class="col-md-3">{% trans "Non-trainable params" %}</dt>
+            <dd class="col-md-9">{{ version.nb_non_trainable|intcomma }}</dd>
         </dl>
     </div>
 </div>

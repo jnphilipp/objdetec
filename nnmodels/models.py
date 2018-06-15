@@ -19,9 +19,11 @@
 import os
 
 from django.conf import settings
+from django.contrib.postgres.fields import ArrayField, JSONField
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
+from django_fsm import FSMField, transition
 from objdetec.fields import SingleLineTextField
 
 
@@ -83,8 +85,54 @@ class Version(models.Model):
                                          null=True, max_length=4096,
                                          verbose_name=_('Train-history file'))
 
+    state = FSMField(default='new', verbose_name=_('State'))
+    inputs = ArrayField(SingleLineTextField(),
+                        blank=True,
+                        null=True,
+                        verbose_name=_('Inputs'))
+    outputs = ArrayField(SingleLineTextField(),
+                         blank=True,
+                         null=True,
+                         verbose_name=_('Outputs'))
+    config = JSONField(blank=True, null=True, verbose_name=_('Config'))
+    nb_trainable = models.PositiveIntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('Trainable params')
+    )
+    nb_non_trainable = models.PositiveIntegerField(
+        blank=True,
+        null=True,
+        verbose_name=_('Non-trainable params')
+    )
+
+    @transition(field=state, source='new', target='done', on_error='failed')
+    def update_from_model(self):
+        from keras.models import load_model
+        from keras.utils import plot_model
+        from keras.utils.layer_utils import count_params
+
+        model = load_model(os.path.join(settings.MEDIA_ROOT,
+                                        self.model_file.name))
+        model._check_trainable_weights_consistency()
+        self.inputs = [str(i) for i in model.inputs]
+        self.outputs = [str(o) for o in model.outputs]
+        self.config = model.get_config()
+        self.nb_non_trainable = count_params(model.non_trainable_weights)
+        if hasattr(model, '_collected_trainable_weights'):
+            self.nb_trainable = count_params(
+                model._collected_trainable_weights)
+        else:
+            self.nb_trainable = count_params(model.trainable_weights)
+
+        img_path = os.path.join(settings.MEDIA_ROOT, self.plot_file())
+        plot_model(model, to_file=img_path)
+
     def plot_file(self):
         return '%s.png' % self.model_file
+
+    def plot_url(self):
+        return os.path.join(settings.MEDIA_URL, '%s.png' % self.model_file)
 
     def save(self, *args, **kwargs):
         if self.pk:

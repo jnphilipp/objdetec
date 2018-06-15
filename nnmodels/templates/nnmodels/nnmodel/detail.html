@@ -1,5 +1,5 @@
 {% extends "objdetec/base.html" %}
-{% load i18n nnmodels objdetec static %}
+{% load humanize i18n nnmodels objdetec static %}
 
 
 {% block extrahead %}
@@ -53,17 +53,15 @@
                                         <dt class="col-md-2">{% trans "Last Modified" %}</dt>
                                         <dd class="col-md-4">{{ nnmodel.versions.first.updated_at|date:"r" }}</dd>
                                         <dt class="col-md-2">{% trans "Inputs" %}</dt>
-                                        <dd class="col-md-4"><code>{{ nnmodel.versions.first|inputs }}</code></dd>
+                                        <dd class="col-md-4"><code>{{ nnmodel.versions.first.inputs }}</code></dd>
                                         <dt class="col-md-2">{% trans "Outputs" %}</dt>
-                                        <dd class="col-md-4"><code>{{ nnmodel.versions.first|outputs }}</code></dd>
-                                        {% with params=nnmodel.versions.first|parameter_count %}
-                                            <dt class="col-md-3">{% trans "Total params" %}</dt>
-                                            <dd class="col-md-9">{{ params|get_item:"total" }}</dd>
-                                            <dt class="col-md-3">{% trans "Trainable params" %}</dt>
-                                            <dd class="col-md-9">{{ params|get_item:"trainable" }}</dd>
-                                            <dt class="col-md-3">{% trans "Non-trainable params" %}</dt>
-                                            <dd class="col-md-9">{{ params|get_item:"non-trainable" }}</dd>
-                                        {% endwith %}
+                                        <dd class="col-md-4"><code>{{ nnmodel.versions.first.outputs }}</code></dd>
+                                        <dt class="col-md-3">{% trans "Total params" %}</dt>
+                                        <dd class="col-md-9">{{ nnmodel.versions.first|total_params|intcomma }}</dd>
+                                        <dt class="col-md-3">{% trans "Trainable params" %}</dt>
+                                        <dd class="col-md-9">{{ nnmodel.versions.first.nb_trainable|intcomma }}</dd>
+                                        <dt class="col-md-3">{% trans "Non-trainable params" %}</dt>
+                                        <dd class="col-md-9">{{ nnmodel.versions.first.nb_non_trainable|intcomma }}</dd>
                                     </dl>
                                 </div>
                             </div>
@@ -98,22 +96,30 @@
                                     <thead>
                                         <tr>
                                             <th>{% trans "Name" %}</th>
-                                            <th>{% trans "Model file" %}</th>
-                                            <th>{% trans "Train-history file" %}</th>
                                             <th>{% trans "#Inputs" %}</th>
                                             <th>{% trans "#Outputs" %}</th>
                                             <th>{% trans "Last modified" %}</th>
+                                            <th>{% trans "Total params" %}</th>
+                                            <th>{% trans "Trainable params" %}</th>
+                                            <th>{% trans "Non-trainable params" %}</th>
+                                            {% if request.user.is_staff %}
+                                                <th>{% trans "State" %}</th>
+                                            {% endif %}
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {% for version in nnmodel.versions.all %}
                                             <tr>
                                                 <th><a href="{% url "nnmodels:version" nnmodel.slug version.pk %}">{{ version.name }}</a></th>
-                                                <td>{{ version.model_file|basename }}</td>
-                                                <td>{{ version.trainhistory_file|basename }}</td>
-                                                <td>{{ version|inputs|length }}</td>
-                                                <td>{{ version|outputs|length }}</td>
+                                                <td>{{ version.inputs|length }}</td>
+                                                <td>{{ version.outputs|length }}</td>
                                                 <td>{{ version.updated_at|date:"r" }}</td>
+                                                <td>{{ nnmodel.versions.first|total_params|intcomma }}</td>
+                                                <td>{{ nnmodel.versions.first.nb_trainable|intcomma }}</td>
+                                                <td>{{ nnmodel.versions.first.nb_non_trainable|intcomma }}</td>
+                                                {% if request.user.is_staff %}
+                                                    <th>{{ version.state }}</th>
+                                                {% endif %}
                                             </tr>
                                         {% endfor %}
                                     </tbody>

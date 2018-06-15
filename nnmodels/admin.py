@@ -34,8 +34,13 @@ class NNModelAdmin(admin.ModelAdmin):
 
 @admin.register(Version)
 class VersionAdmin(admin.ModelAdmin):
-    fieldsets = [(None, {'fields': ['nnmodel', 'name', 'model_file',
-                                    'trainhistory_file']})]
-    list_display = ('nnmodel', 'name', 'updated_at')
-    list_filter = ('nnmodel',)
+    fieldsets = [
+        (None, {'fields': ['nnmodel', 'name', 'model_file',
+                           'trainhistory_file']}),
+        (_('FSM state'), {'fields': ['state']}),
+        (_('Model values'), {'fields': ['inputs', 'outputs', 'config',
+                                        'nb_trainable', 'nb_non_trainable']})
+    ]
+    list_display = ('nnmodel', 'name', 'state', 'updated_at')
+    list_filter = ('nnmodel', 'state')
     search_fields = ('nnmodel__name', 'name')
