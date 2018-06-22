@@ -18,4 +18,12 @@
 
 from django.contrib import admin
 
-# Register your models here.
+from .models import Output
+
+
+@admin.register(Output)
+class OutputAdmin(admin.ModelAdmin):
+    fieldsets = [(None, {'fields': ['name', 't', 'p']})]
+    list_display = ('name', 't', 'updated_at')
+    list_filter = ('t',)
+    search_fields = ('name',)

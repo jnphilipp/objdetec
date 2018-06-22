@@ -16,6 +16,26 @@
 # You should have received a copy of the GNU General Public License
 # along with objdetec.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
+from objdetec.fields import SingleLineTextField
 
-# Create your models here.
+
+class Output(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True,
+                                      verbose_name=_('Created at'))
+    updated_at = models.DateTimeField(auto_now=True,
+                                      verbose_name=_('Updated at'))
+
+    name = SingleLineTextField(verbose_name=_('Name'))
+    t = models.CharField(max_length=8)
+    p = ArrayField(ArrayField(ArrayField(models.FloatField(default=0.))))
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ('name',)
+        verbose_name = _('Output')
+        verbose_name_plural = _('Outputs')
