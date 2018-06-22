@@ -39,3 +39,27 @@ class Output(models.Model):
         ordering = ('name',)
         verbose_name = _('Output')
         verbose_name_plural = _('Outputs')
+
+
+class Result(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True,
+                                      verbose_name=_('Created at'))
+    updated_at = models.DateTimeField(auto_now=True,
+                                      verbose_name=_('Updated at'))
+
+    version = models.ForeignKey('nnmodels.Version', models.CASCADE,
+                                related_name='results',
+                                verbose_name=_('Version'))
+    image = models.ForeignKey('images.Image', models.CASCADE,
+                              related_name='results',
+                              verbose_name=_('Image'))
+    outputs = models.ManyToManyField(Output, related_name='results',
+                                     verbose_name=_('Outputs'))
+
+    def __str__(self):
+        return '%s - %s' % (self.version, self.image)
+
+    class Meta:
+        ordering = ('version', 'image')
+        verbose_name = _('Result')
+        verbose_name_plural = _('Results')

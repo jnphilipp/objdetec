@@ -17,8 +17,9 @@
 # along with objdetec.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib import admin
+from django.utils.translation import ugettext_lazy as _
 
-from .models import Output
+from .models import Output, Result
 
 
 @admin.register(Output)
@@ -27,3 +28,16 @@ class OutputAdmin(admin.ModelAdmin):
     list_display = ('name', 't', 'updated_at')
     list_filter = ('t',)
     search_fields = ('name',)
+
+
+@admin.register(Result)
+class ResultAdmin(admin.ModelAdmin):
+    fieldsets = [
+        (None, {'fields': ['version', 'image']}),
+        (_('Outputs'), {'fields': ['outputs']}),
+    ]
+    filter_horizontal = ('outputs',)
+    list_display = ('version', 'image', 'updated_at')
+    list_filter = ('version', 'image')
+    search_fields = ('version__nnmodel__name', 'version__name',
+                     'image__name')
