@@ -25,7 +25,9 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
 from images.forms import ImageForm
 from images.models import Image
+from nnmodels.models import NNModel
 from objdetec.decorators import piwik
+from results.models import Result
 
 
 @piwik('Images • Images • objdetec')
@@ -44,6 +46,28 @@ def detail(request, slug):
     if not image.public and request.user != image.uploader:
         msg = _('You are not allowed to access this Image.')
         return HttpResponseForbidden(msg)
+
+    nnmodels = NNModel.objects.all()
+    if request.user.is_authenticated:
+        nnmodels = nnmodels.filter(Q(public=True) | Q(uploader=request.user))
+    else:
+        nnmodels = nnmodels.filter(public=True)
+    return render(request, 'images/image/detail.html', locals())
+
+@piwik('Result • Image • Images • objdetec')
+def result(request, slug, result_id):
+    image = get_object_or_404(Image, slug=slug)
+    if not image.public and request.user != image.uploader:
+        msg = _('You are not allowed to access this Image.')
+        return HttpResponseForbidden(msg)
+
+    nnmodels = NNModel.objects.all()
+    if request.user.is_authenticated:
+        nnmodels = nnmodels.filter(Q(public=True) | Q(uploader=request.user))
+    else:
+        nnmodels = nnmodels.filter(public=True)
+
+    result = get_object_or_404(Result, pk=result_id)
     return render(request, 'images/image/detail.html', locals())
 
 

@@ -26,4 +26,6 @@ urlpatterns = [
     path('image/add/', views.add, name='image_add'),
     path('image/<slug:slug>/', views.detail, name='image'),
     path('image/<slug:slug>/edit/', views.edit, name='image_edit'),
+    path('image/<slug:slug>/result/<int:result_id>/',
+         views.result, name='image_result'),
 ]

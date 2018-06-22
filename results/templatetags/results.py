@@ -16,33 +16,37 @@
 # You should have received a copy of the GNU General Public License
 # along with objdetec.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.utils import timezone
-from objdetec.templatetags.objdetec import register
+import base64
+import numpy as np
+import os
+
+from django.template import Library
+from io import BytesIO
+from keras.preprocessing import image
+from PIL import Image
+
+register = Library()
 
 
 @register.filter
-def startswith(value, start):
-    return value.startswith(start)
+def array_to_img(array, c=None):
+    rgb = np.zeros((len(array), len(array[0]), 3))
+    for i in range(len(array)):
+        for j in range(len(array[0])):
+                if c is None:
+                    rgb[i, j, :] = array[i][j]
+                else:
+                    rgb[i, j, :] = array[i][j][c]
+    img = image.array_to_img(rgb)
+    buffer = BytesIO()
+    img.save(buffer, 'png')
+    b = b'data:image/png;base64,%s' % base64.b64encode(buffer.getvalue())
+    return b.decode('utf-8')
 
 
 @register.filter
-def endswith(value, end):
-    return value.endswith(end)
-
-
-@register.filter
-def get_item(obj, key):
-    if type(obj) == list or type(obj) == tuple:
-        return obj[key]
+def nb_classes(output):
+    if output.t == 'class':
+        return len(output.p[0][0])
     else:
-        return obj.get(key)
-
-
-@register.filter
-def as_range(i):
-    return range(i)
-
-
-@register.simple_tag
-def timestamp(format_str):
-    return timezone.now().strftime(format_str)
+        return 0
