@@ -51,7 +51,7 @@
                                         <dt class="col-md-2">{% trans "Name" %}</dt>
                                         <dd class="col-md-4">{{ nnmodel.versions.first.name }}</dd>
                                         <dt class="col-md-2">{% trans "Last Modified" %}</dt>
-                                        <dd class="col-md-4">{{ nnmodel.versions.first.updated_at|date:"r" }}</dd>
+                                        <dd class="col-md-4">{{ nnmodel.versions.first.updated_at|naturaltime }}</dd>
                                         <dt class="col-md-2">{% trans "Inputs" %}</dt>
                                         <dd class="col-md-4"><code>{{ nnmodel.versions.first.inputs }}</code></dd>
                                         <dt class="col-md-2">{% trans "Outputs" %}</dt>

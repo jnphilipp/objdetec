@@ -33,7 +33,7 @@
             <dt class="col-md-3">{% trans "Name" %}</dt>
             <dd class="col-md-9">{{ version.name }}</dd>
             <dt class="col-md-3">{% trans "Last Modified" %}</dt>
-            <dd class="col-md-9">{{ version.updated_at|date:"r" }}</dd>
+            <dd class="col-md-9">{{ version.updated_at|naturaltime }}</dd>
             <dt class="col-md-3">{% trans "Model" %}</dt>
             <dd class="col-md-3">{{ version.model_file|basename }}</dd>
             <dd class="col-md-3"><a href="{% url "nnmodels:version_config" nnmodel.slug version.pk %}">{% trans "View config" %}</a></dd>
