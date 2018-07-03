@@ -57,9 +57,16 @@
                     {% if user.is_authenticated %}
                     {% else %}
                         <li class="nav-item">
-                            {% url "imprint" as imprint_url %}
-                            <a class="nav-link{% if request.path|startswith:imprint_url %} active{% endif %}" href="{{ imprint_url }}">
-                                {% trans "Imprint" %}
+                            {% url "legal_notice" as legal_notice_url %}
+                            <a class="nav-link{% if request.path|startswith:legal_notice_url %} active{% endif %}" href="{{ legal_notice_url }}">
+                                {% trans "Legal notice" %}
+                                {% if request.path|startswith:imprint_url %}<span class="sr-only">(current)</span>{% endif %}
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            {% url "privacy_policy" as privacy_policy_url %}
+                            <a class="nav-link{% if request.path|startswith:privacy_policy_url %} active{% endif %}" href="{{ privacy_policy_url }}">
+                                {% trans "Privacy policy" %}
                                 {% if request.path|startswith:imprint_url %}<span class="sr-only">(current)</span>{% endif %}
                             </a>
                         </li>
@@ -86,9 +93,14 @@
                                     <a class="dropdown-item" href="{% url "admin:index" %}">{% trans "Admin" %}</a>
                                 {% endif %}
                                 <div class="dropdown-divider"></div>
-                                {% url "imprint" as imprint_url %}
-                                <a class="dropdown-item{% if request.path|startswith:imprint_url %} active{% endif %}" href="{{ imprint_url }}">
-                                    {% trans "Imprint" %}
+                                {% url "legal_notice" as legal_notice_url %}
+                                <a class="dropdown-item{% if request.path|startswith:legal_notice_url %} active{% endif %}" href="{{ legal_notice_url }}">
+                                    {% trans "Legal notice" %}
+                                    {% if request.path|startswith:imprint_url %}<span class="sr-only">(current)</span>{% endif %}
+                                </a>
+                                {% url "privacy_policy" as privacy_policy_url %}
+                                <a class="dropdown-item{% if request.path|startswith:privacy_policy_url %} active{% endif %}" href="{{ privacy_policy_url }}">
+                                    {% trans "Privacy policy" %}
                                     {% if request.path|startswith:imprint_url %}<span class="sr-only">(current)</span>{% endif %}
                                 </a>
                                 <div class="dropdown-divider"></div>

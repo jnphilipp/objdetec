@@ -45,7 +45,8 @@ admin.site.site_header = 'objdetec administration'
 
 urlpatterns = [
     path('', views.dashboard, name='dashboard'),
-    path('imprint/', views.imprint, name='imprint'),
+    path('legal_notice/', views.legal_notice, name='legal_notice'),
+    path('privacy_policy/', views.privacy_policy, name='privacy_policy'),
 
     path('admin/', admin.site.urls),
     path('images/', include('images.urls')),

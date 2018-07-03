@@ -26,6 +26,11 @@ def dashboard(request):
     return render(request, 'objdetec/dashboard.html', locals())
 
 
-@piwik('Imprint • objdetec')
-def imprint(request):
-    return render(request, 'objdetec/imprint.html', locals())
+@piwik('Legal notice • objdetec')
+def legal_notice(request):
+    return render(request, 'objdetec/legal_notice.html', locals())
+
+
+@piwik('Privacy policy • objdetec')
+def privacy_policy(request):
+    return render(request, 'objdetec/privacy_policy.html', locals())
