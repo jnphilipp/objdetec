@@ -2,6 +2,7 @@
 
 from django.db import migrations, models
 import django.db.models.deletion
+import results.validators
 
 
 class Migration(migrations.Migration):
@@ -22,6 +23,7 @@ class Migration(migrations.Migration):
                 ('image', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='results', to='images.Image', verbose_name='Image')),
                 ('outputs', models.ManyToManyField(related_name='results', to='results.Output', verbose_name='Outputs')),
                 ('version', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='results', to='nnmodels.Version', verbose_name='Version')),
+                ('overlap', models.FloatField(default=0.75, validators=[results.validators.validate_prob], verbose_name='Overlap')),
             ],
             options={
                 'verbose_name': 'Result',

@@ -35,6 +35,7 @@ class ResultAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['version', 'image']}),
         (_('Outputs'), {'fields': ['outputs']}),
+        (_('Config'), {'fields': ['overlap']}),
     ]
     filter_horizontal = ('outputs',)
     list_display = ('version', 'image', 'updated_at')
