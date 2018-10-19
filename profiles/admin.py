@@ -27,7 +27,7 @@ from .models import User
 @admin.register(User)
 class UserAdmin(auth_admin.UserAdmin):
     add_fieldsets = (
-        (None, {'fields': ('email', 'first_name', 'password1', 'password2')}),
+        (None, {'fields': ('email', 'password1', 'password2')}),
     )
     add_form = UserCreationForm
     exclude = ('username',)

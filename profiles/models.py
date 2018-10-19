@@ -20,10 +20,12 @@ import os
 
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-from profiles.user_manager import UserManager
 from objdetec.fields import SingleLineTextField
+
+from .user_manager import UserManager
 
 
 def default_unique_visitor_id():
@@ -65,13 +67,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(
         _('Staff status'),
         default=False,
-        help_text=_('Designates whether the user can log into the site.'),
+        help_text=_('Designates whether the user can log into this site.'),
     )
     is_active = models.BooleanField(
         _('Active'),
         default=True,
         help_text=_(
-            'Designates whether the user should be treated as active. ' +
+            'Designates whether this user should be treated as active. ' +
             'Unselect this instead of deleting accounts.'
         ),
     )
@@ -81,6 +83,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         unique=True,
         verbose_name=_('Unique visitor ID')
     )
+
+    def get_absolute_url(self):
+        return reverse('profiles:profile')
 
     def __str__(self):
         return self.get_short_name()

@@ -33,30 +33,11 @@ class AuthenticationForm(forms.AuthenticationForm):
         )
 
 
-class PasswordChangeForm(forms.PasswordChangeForm):
-    def __init__(self, *args, **kwargs):
-        super(PasswordChangeForm, self).__init__(*args, **kwargs)
-        self.fields['new_password1'].help_text = mark_safe(
-            self.fields['new_password1'].help_text
-        )
-
-
-class SetPasswordForm(forms.SetPasswordForm):
-    def __init__(self, *args, **kwargs):
-        super(SetPasswordForm, self).__init__(*args, **kwargs)
-        self.fields['new_password1']. help_text = mark_safe(
-            self.fields['new_password1'].help_text
-        )
-
-
 class UserChangeForm(forms.UserChangeForm):
     def __init__(self, *args, **kwargs):
         super(UserChangeForm, self).__init__(*args, **kwargs)
-        self.fields['password'].help_text = mark_safe(_(
-            "Raw passwords are not stored, so there is no way to see this "
-            "user's password, but you can change the password using "
-            "<a href=\"%(url)s\">this form</a>."
-        ) % {'url': reverse('profiles:password_change')})
+        self.fields['password']. \
+            help_text = mark_safe(self.fields['password'].help_text)
 
     class Meta(forms.UserChangeForm.Meta):
         model = get_user_model()

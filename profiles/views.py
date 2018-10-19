@@ -17,14 +17,15 @@
 # along with objdetec.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, views
-from django.shortcuts import redirect, render
-from django.urls import reverse
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
 from objdetec.decorators import piwik
-from profiles.forms import (AuthenticationForm, PasswordChangeForm,
-                            SetPasswordForm, UserCreationForm)
+
+from .forms import AuthenticationForm, UserChangeForm, UserCreationForm
+from .models import User
 
 
 @csrf_protect
@@ -33,8 +34,7 @@ def signin(request):
     gnext = request.GET.get('next')
 
     if request.user.is_authenticated:
-        print(gnext)
-        return redirect(gnext if gnext else 'dashboard')
+        return redirect(gnext) if gnext else redirect('dashboard')
 
     if request.method == 'POST':
         form = AuthenticationForm(data=request.POST)
@@ -47,14 +47,15 @@ def signin(request):
                     messages.add_message(request, messages.SUCCESS,
                                          _('You have successfully signed in.'))
 
-                    return redirect(gnext if gnext else 'dashboard')
+                    return redirect(gnext) if gnext else redirect('dashboard')
                 else:
                     messages.add_message(request, messages.ERROR,
                                          _('Your account is disabled.'))
                 return redirect(request.META.get('HTTP_REFERER'))
-        msg = _('Please enter a correct email and password to sign in. ' +
-                'Note that both fields may be case-sensitive.')
-        messages.add_message(request, messages.ERROR, msg)
+        messages.add_message(request, messages.ERROR,
+                             _('Please enter a correct email and password to' +
+                               ' sign in. Note that both fields may be ' +
+                               'case-sensitive.'))
     else:
         form = AuthenticationForm(request)
     return render(request, 'registration/signin.html', locals())
@@ -79,49 +80,16 @@ def signup(request):
 
 
 @csrf_protect
-@piwik('Sign out • Profile • objdetec')
-def signout(request):
-    return views.logout(request, template_name='registration/signout.html')
-
-
-@csrf_protect
-@piwik('Password change • Profile • objdetec')
-def password_change(request):
-    done_url = reverse('profiles:password_change_done')
-    return views.password_change(request,
-                                 password_change_form=PasswordChangeForm,
-                                 post_change_redirect=done_url)
-
-
-@csrf_protect
-@piwik('Password change • Profile • objdetec')
-def password_change_done(request):
-    return views.password_change_done(request)
-
-
-@csrf_protect
-@piwik('Password reset • Profile • objdetec')
-def password_reset(request):
-    done_url = reverse('profiles:password_reset_done')
-    return views.password_reset(request, post_reset_redirect=done_url)
-
-
-@csrf_protect
-@piwik('Password reset • Profile • objdetec')
-def password_reset_done(request):
-    return views.password_reset_done(request)
-
-
-@csrf_protect
-@piwik('Password reset • Profile • objdetec')
-def password_reset_confirm(request, uidb64=None, token=None):
-    complete_url = reverse('profiles:password_reset_complete')
-    return views.password_reset_confirm(request, uidb64=uidb64, token=token,
-                                        set_password_form=SetPasswordForm,
-                                        post_reset_redirect=complete_url)
-
-
-@csrf_protect
-@piwik('Password reset • Profile • objdetec')
-def password_reset_complete(request):
-    return views.password_reset_complete(request)
+@login_required
+@piwik('Profile • objdetec')
+def profile(request):
+    user = get_object_or_404(User, pk=request.user.pk)
+    if request.method == 'POST':
+        form = UserChangeForm(instance=request.user, data=request.POST)
+        if form.is_valid():
+            user = form.save()
+            messages.success(request,
+                             _('Your profile has been successfully updated.'))
+    else:
+        form = UserChangeForm(instance=request.user)
+    return render(request, 'profiles/profile_detail.html', locals())
