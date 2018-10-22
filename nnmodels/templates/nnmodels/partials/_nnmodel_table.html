@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load humanize i18n %}
 
 
 <div class="table-responsive">
@@ -8,18 +8,20 @@
                 <th>{% trans "Name" %}</th>
                 <th>{% trans "Description" %}</th>
                 <th>{% trans "#Version" %}</th>
+                <th>{% trans "Last modified" %}</th>
             </tr>
         </thead>
         <tbody>
             {% for nnmodel in nnmodels %}
                 <tr>
-                    <th><a href="{% url "nnmodels:nnmodel" nnmodel.slug %}">{{ nnmodel.name }}</a></th>
+                    <th><a href="{% url "nnmodels:nnmodel_detail" nnmodel.slug %}">{{ nnmodel.name }}</a></th>
                     <td>
                         {% if nnmodel.description %}
                             {% autoescape off %}{{ nnmodel.description }}{% endautoescape %}
                         {% endif %}
                     </td>
                     <td>{{ nnmodel.versions.count }}</td>
+                    <td>{{ nnmodel.versions.last.updated_at|naturaltime }}</td>
                 </tr>
             {% endfor %}
         </tbody>

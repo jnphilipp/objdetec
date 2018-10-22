@@ -1,0 +1,26 @@
+{% extends "objdetec/base.html" %}
+{% load bootstrap i18n %}
+
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url "dashboard" %}">{% trans "Dashboard" %}</a></li>
+<li class="breadcrumb-item"><a href="{% url "nnmodels:nnmodel_list" %}">{% trans "NN Models" %}</a></li>
+{% if version %}
+    <li class="breadcrumb-item"><a href="{% url "nnmodels:nnmodel_detail" version.nnmodel.slug %}">{{ version.nnmodel.name }}</a></li>
+    <li class="breadcrumb-item"><a href="{% url "nnmodels:version_detail" version.nnmodel.slug version.pk %}">{{ version.name }}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{% trans "Update" %}</li>
+{% else %}
+    <li class="breadcrumb-item"><a href="{% url "nnmodels:nnmodel_detail" nnmodel.slug %}">{{ nnmodel.name }}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{% trans "Create Version" %}</li>
+{% endif %}
+{% endblock %}
+
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        {% trans "Save" as save_trans %}
+        {% bootstrap_form form=form btn_title=save_trans enctype="multipart/form-data" %}
+    </div>
+</div>
+{% endblock %}

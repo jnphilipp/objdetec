@@ -1,0 +1,94 @@
+{% extends "objdetec/base.html" %}
+{% load humanize i18n nnmodels objdetec static %}
+
+
+{% block extrahead %}
+<script src="{% static "js/highcharts.js" %}"></script>
+<script src="{% static "js/highcharts-more.js" %}"></script>
+<script src="{% static "js/nnmodels/trainhistory.js" %}"></script>
+{% endblock %}
+
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url "dashboard" %}">{% trans "Dashboard" %}</a></li>
+<li class="breadcrumb-item"><a href="{% url "nnmodels:nnmodel_list" %}">{% trans "NN Models" %}</a></li>
+<li class="breadcrumb-item"><a href="{% url "nnmodels:nnmodel_detail" version.nnmodel.slug %}">{{ version.nnmodel.name }}</a></li>
+{% if request.path|endswith:"/config/" %}
+    <li class="breadcrumb-item"><a href="{% url "nnmodels:version_detail" version.nnmodel.slug version.pk %}">{{ version.name }}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{% trans "Config" %}</li>
+{% elif request.path|endswith:"/plot/" %}
+    <li class="breadcrumb-item"><a href="{% url "nnmodels:version_detail" version.nnmodel.slug version.pk %}">{{ version.name }}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{% trans "Plot" %}</li>
+{% else %}
+    <li class="breadcrumb-item active" aria-current="page">{{ version.name }}</li>
+{% endif %}
+{% endblock %}
+
+
+{% block content %}
+{% if request.path|endswith:"/config/" %}
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <pre>{{ model_config }}</pre>
+        </div>
+    </div>
+{% elif request.path|endswith:"/plot/" %}
+    <img class="img-fluid mx-auto d-block" src="{{ version.plot_url }}">
+{% else %}
+    {% if nnmodel.uploader == request.user or request.user.is_staff %}
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <div class="float-right">
+                <a href="{% url "nnmodels:version_update" version.nnmodel.slug version.pk %}" class="btn btn-primary" role="button">{% trans "Update Version" %}</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <div class="row mt-2">
+        <div class="col-md-10 offset-md-1">
+            <dl class="row">
+                <dt class="col-md-3">{% trans "Last Modified" %}</dt>
+                <dd class="col-md-9">{{ version.updated_at|naturaltime }}</dd>
+                <dt class="col-md-3">{% trans "Model" %}</dt>
+                <dd class="col-md-9">
+                    <ul>
+                        <li><a href="{% url "nnmodels:version_config" version.nnmodel.slug version.pk %}">{% trans "Config" %}</a></li>
+                        <li><a href="{% url "nnmodels:version_plot" version.nnmodel.slug version.pk %}">{% trans "Plot" %}</a></li>
+                    </ul>
+                </dd>
+                <dt class="col-md-3">{% trans "Inputs" %}</dt>
+                <dd class="col-md-9"><code>{{ version.inputs }}</code></dd>
+                <dt class="col-md-3">{% trans "Outputs" %}</dt>
+                <dd class="col-md-9"><code>{{ version.outputs }}</code></dd>
+                <dt class="col-md-3">{% trans "Total params" %}</dt>
+                <dd class="col-md-9">{{ version|total_params|intcomma }}</dd>
+                <dt class="col-md-3">{% trans "Trainable params" %}</dt>
+                <dd class="col-md-9">{{ version.nb_trainable|intcomma }}</dd>
+                <dt class="col-md-3">{% trans "Non-trainable params" %}</dt>
+                <dd class="col-md-9">{{ version.nb_non_trainable|intcomma }}</dd>
+                <dt class="col-md-3">{% trans "Results" %}</dt>
+                <dd class="col-md-9">
+                    <ul>
+                        {% for result in version.results.all %}
+                            <li><a href="{% url "images:image_result" result.image.slug result.pk %}">{{ result.image.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </dd>
+            </dl>
+        </div>
+    </div>
+    {% if version.trainhistory_file %}
+        <div class="row">
+            <div class="col-md-12">
+                <div id="trainhistchart" style="min-width: 310px; height: 800px;"></div>
+                <script type="text/javascript">
+                    $(document).ready(function() {
+                        var chart_url = "{% url "nnmodels:version_chart_trainhistory" version.nnmodel.slug version.pk %}";
+                        trainhistory_chart(chart_url, "trainhistchart");
+                    });
+                </script>
+            </div>
+        </div>
+    {% endif %}
+{% endif %}
+{% endblock %}

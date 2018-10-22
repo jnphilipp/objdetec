@@ -27,9 +27,9 @@ from objdetec.decorators import piwik
 
 
 @piwik('Train-history chart • Version • NN Model • NN Models • objdetec')
-def trainhistory(request, slug, version_id):
+def trainhistory(request, slug, pk):
     nnmodel = get_object_or_404(NNModel, slug=slug)
-    version = get_object_or_404(Version, nnmodel=nnmodel, pk=version_id)
+    version = get_object_or_404(Version, nnmodel=nnmodel, pk=pk)
 
     if not nnmodel.public and request.user != nnmodel.uploader:
         msg = _('You are not allowed to access this NNModel.')

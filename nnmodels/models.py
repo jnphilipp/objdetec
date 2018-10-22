@@ -22,6 +22,7 @@ from django.conf import settings
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django.db import models
 from django.template.defaultfilters import slugify
+from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django_fsm import FSMField, transition
 from objdetec.fields import SingleLineTextField
@@ -48,7 +49,7 @@ class NNModel(models.Model):
                                  verbose_name=_('Uploader'))
 
     def get_absolute_url(self):
-        return reverse('nnmodels:nnmodel', args=[self.slug])
+        return reverse('nnmodels:nnmodel_detail', args=[self.slug])
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -105,6 +106,10 @@ class Version(models.Model):
         null=True,
         verbose_name=_('Non-trainable params')
     )
+
+    def get_absolute_url(self):
+        return reverse('nnmodels:version_detail', args=[self.nnmodel.slug,
+                                                        self.pk])
 
     @transition(field=state, source='new', target='done', on_error='failed')
     def update_from_model(self):

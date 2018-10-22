@@ -4,12 +4,12 @@
 
 {% block breadcrumbs %}
 <li class="breadcrumb-item"><a href="{% url "dashboard" %}">{% trans "Dashboard" %}</a></li>
-<li class="breadcrumb-item"><a href="{% url "nnmodels:nnmodels" %}">{% trans "NN Models" %}</a></li>
+<li class="breadcrumb-item"><a href="{% url "nnmodels:nnmodel_list" %}">{% trans "NN Models" %}</a></li>
 {% if nnmodel %}
-    <li class="breadcrumb-item"><a href="{% url "nnmodels:nnmodel" nnmodel.slug %}">{{ nnmodel.name }}</a></li>
+    <li class="breadcrumb-item"><a href="{% url "nnmodels:nnmodel_detail" nnmodel.slug %}">{{ nnmodel.name }}</a></li>
     <li class="breadcrumb-item active" aria-current="page">{% trans "Edit" %}</li>
 {% else %}
-    <li class="breadcrumb-item active" aria-current="page">{% trans "Add" %}</li>
+    <li class="breadcrumb-item active" aria-current="page">{% trans "Create" %}</li>
 {% endif %}
 {% endblock %}
 

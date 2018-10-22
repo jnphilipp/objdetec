@@ -17,4 +17,4 @@
 # along with objdetec.  If not, see <http://www.gnu.org/licenses/>.
 
 from . import charts
-from .base import detail, config, plot, add, edit
+from .base import CreateView, DetailView, UpdateView

@@ -17,25 +17,35 @@
 # along with objdetec.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.urls import path
-from . import views
+from objdetec.decorators import piwik
+
+from .views import nnmodel, version
 
 
 app_name = 'nnmodels'
 urlpatterns = [
-    path('nnmodel/', views.nnmodel.list, name='nnmodels'),
-    path('nnmodel/add/', views.nnmodel.add, name='nnmodel_add'),
-    path('nnmodel/<slug:slug>/', views.nnmodel.detail, name='nnmodel'),
-    path('nnmodel/<slug:slug>/edit/', views.nnmodel.edit,
-         name='nnmodel_edit'),
-    path('nnmodel/<slug:slug>/add/', views.version.add, name='version_add'),
-    path('nnmodel/<slug:slug>/<int:version_id>/', views.version.detail,
-         name='version'),
-    path('nnmodel/<slug:slug>/<int:version_id>/config/', views.version.config,
-         name='version_config'),
-    path('nnmodel/<slug:slug>/<int:version_id>/edit/', views.version.edit,
-         name='version_edit'),
-    path('nnmodel/<slug:slug>/<int:version_id>/plot/', views.version.plot,
-         name='version_plot'),
-    path('nnmodel/<slug:slug>/<int:version_id>/charts/trainhistory/',
-         views.version.charts.trainhistory, name='version_chart_trainhistory'),
+    path('nnmodel/', nnmodel.ListView.as_view(), name='nnmodel_list'),
+    path('nnmodel/<int:page>/', nnmodel.ListView.as_view()),
+    path('nnmodel/create/', nnmodel.CreateView.as_view(),
+         name='nnmodel_create'),
+    path('nnmodel/<slug:slug>/', nnmodel.DetailView.as_view(),
+         name='nnmodel_detail'),
+    path('nnmodel/<slug:slug>/update/', nnmodel.UpdateView.as_view(),
+         name='nnmodel_update'),
+
+    path('nnmodel/<slug:slug>/create/', version.CreateView.as_view(),
+         name='version_create'),
+    path('nnmodel/<slug:slug>/<int:pk>/',
+         piwik('Version • NN Model • N Models • objdetec')(
+            version.DetailView.as_view()), name='version_detail'),
+    path('nnmodel/<slug:slug>/<int:pk>/config/',
+         piwik('Config • Version • NN Model • N Models • objdetec')(
+            version.DetailView.as_view()), name='version_config'),
+    path('nnmodel/<slug:slug>/<int:pk>/plot/',
+         piwik('Plot • Version • NN Model • N Models • objdetec')(
+            version.DetailView.as_view()), name='version_plot'),
+    path('nnmodel/<slug:slug>/<int:pk>/update/',
+         version.UpdateView.as_view(), name='version_update'),
+    path('nnmodel/<slug:slug>/<int:pk>/charts/trainhistory/',
+         version.charts.trainhistory, name='version_chart_trainhistory'),
 ]

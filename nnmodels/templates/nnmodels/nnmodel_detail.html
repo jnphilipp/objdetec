@@ -11,7 +11,7 @@
 
 {% block breadcrumbs %}
 <li class="breadcrumb-item"><a href="{% url "dashboard" %}">{% trans "Dashboard" %}</a></li>
-<li class="breadcrumb-item"><a href="{% url "nnmodels:nnmodels" %}">{% trans "NN Models" %}</a></li>
+<li class="breadcrumb-item"><a href="{% url "nnmodels:nnmodel_list" %}">{% trans "NN Models" %}</a></li>
 <li class="breadcrumb-item active" aria-current="page">{{ nnmodel.name }}</li>
 {% endblock %}
 
@@ -21,8 +21,8 @@
     <div class="row">
         <div class="col-md-10 offset-md-1">
             <div class="float-right">
-                <a href="{% url "nnmodels:nnmodel_edit" nnmodel.slug %}" class="btn btn-primary" role="button">{% trans "Edit NN model" %}</a>
-                <a href="{% url "nnmodels:version_add" nnmodel.slug %}" class="btn btn-primary" role="button">{% trans "Add new version" %}</a>
+                <a href="{% url "nnmodels:nnmodel_update" nnmodel.slug %}" class="btn btn-primary" role="button">{% trans "Update NN model" %}</a>
+                <a href="{% url "nnmodels:version_create" nnmodel.slug %}" class="btn btn-primary" role="button">{% trans "Create version" %}</a>
             </div>
             {% if nnmodel.description %}
                 {% autoescape off %}{{ nnmodel.description }}{% endautoescape %}
@@ -40,7 +40,7 @@
                             <button class="btn btn-link" data-toggle="collapse" data-target="#collapseLatestVersion" aria-expanded="true" aria-controls="collapseLatestVersion">
                                 {% trans "Latest version" %}
                             </button>
-                            <a class="btn btn-link float-right" href="{% url "nnmodels:version" nnmodel.slug nnmodel.versions.first.pk %}">{% trans "View" %}</a>
+                            <a class="btn btn-link float-right" href="{% url "nnmodels:version_detail" nnmodel.slug nnmodel.versions.first.pk %}">{% trans "View" %}</a>
                         </h5>
                     </div>
                     <div id="collapseLatestVersion" class="collapse show" aria-labelledby="headingLatestVersion" data-parent="#accordion">
@@ -110,10 +110,10 @@
                                     <tbody>
                                         {% for version in nnmodel.versions.all %}
                                             <tr>
-                                                <th><a href="{% url "nnmodels:version" nnmodel.slug version.pk %}">{{ version.name }}</a></th>
+                                                <th><a href="{% url "nnmodels:version_detail" nnmodel.slug version.pk %}">{{ version.name }}</a></th>
                                                 <td>{{ version.inputs|length }}</td>
                                                 <td>{{ version.outputs|length }}</td>
-                                                <td>{{ version.updated_at|date:"r" }}</td>
+                                                <td>{{ version.updated_at|naturaltime }}</td>
                                                 <td>{{ nnmodel.versions.first|total_params|intcomma }}</td>
                                                 <td>{{ nnmodel.versions.first.nb_trainable|intcomma }}</td>
                                                 <td>{{ nnmodel.versions.first.nb_non_trainable|intcomma }}</td>
