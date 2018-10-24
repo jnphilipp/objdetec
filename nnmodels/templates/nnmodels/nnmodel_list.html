@@ -1,5 +1,5 @@
 {% extends "objdetec/base.html" %}
-{% load bootstrap i18n %}
+{% load bootstrap humanize i18n %}
 
 
 {% block breadcrumbs %}
@@ -20,14 +20,42 @@
 {% endif %}
 <div class="row mt-2">
     <div class="col-md-10 offset-md-1">
-        {% if nnmodels %}
-            {% include "nnmodels/partials/_nnmodel_table.html" %}
-            {% trans "NN Models" as pagination_title %}
-            {% url "nnmodels:nnmodel_list" as base_path %}
-            {% pagination paginator page_obj base_path pagination_title o=o %}
-        {% else %}
-            <p>{% trans "There are no nn models available." %}</p>
-        {% endif %}
+        <div class="table-responsive">
+            <table class="table table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th>{% trans "Name" %}</th>
+                        <th>{% trans "Description" %}</th>
+                        <th>{% trans "#Version" %}</th>
+                        {% if user.is_staff %}
+                            <th>{% trans "Uploader" %}</th>
+                        {% endif %}
+                        <th>{% trans "Last modified" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for nnmodel in nnmodels %}
+                        <tr>
+                            <th><a href="{% url "nnmodels:nnmodel_detail" nnmodel.slug %}">{{ nnmodel.name }}</a></th>
+                            <td>
+                                {% if nnmodel.description %}
+                                    {% autoescape off %}{{ nnmodel.description }}{% endautoescape %}
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge badge-primary badge-pill">{{ nnmodel.versions.count }}</span></td>
+                            {% if user.is_staff %}
+                                <th>{{ nnmodel.uploader }}</th>
+                            {% endif %}
+                            <td>{{ nnmodel.versions.last.updated_at|naturaltime }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% trans "NN Models" as pagination_title %}
+        {% url "nnmodels:nnmodel_list" as base_path %}
+        {% pagination paginator page_obj base_path pagination_title o=o %}
     </div>
 </div>
 {% endblock %}

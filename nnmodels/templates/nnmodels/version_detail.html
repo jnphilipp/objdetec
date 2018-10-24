@@ -27,25 +27,20 @@
 
 {% block content %}
 {% if request.path|endswith:"/config/" %}
-    <div class="row">
+    <div class="row mt-2">
         <div class="col-md-10 offset-md-1">
             <pre>{{ model_config }}</pre>
         </div>
     </div>
 {% elif request.path|endswith:"/plot/" %}
-    <img class="img-fluid mx-auto d-block" src="{{ version.plot_url }}">
-{% else %}
-    {% if nnmodel.uploader == request.user or request.user.is_staff %}
-    <div class="row">
-        <div class="col-md-10 offset-md-1">
-            <div class="float-right">
-                <a href="{% url "nnmodels:version_update" version.nnmodel.slug version.pk %}" class="btn btn-primary" role="button">{% trans "Update Version" %}</a>
-            </div>
+    <div class="row mt-2">
+        <div class="col">
+            <img class="img-fluid mx-auto d-block" src="{{ version.plot_url }}">
         </div>
     </div>
-    {% endif %}
+{% else %}
     <div class="row mt-2">
-        <div class="col-md-10 offset-md-1">
+        <div class="col-md-7 offset-md-1">
             <dl class="row">
                 <dt class="col-md-3">{% trans "Last Modified" %}</dt>
                 <dd class="col-md-9">{{ version.updated_at|naturaltime }}</dd>
@@ -66,6 +61,10 @@
                 <dd class="col-md-9">{{ version.nb_trainable|intcomma }}</dd>
                 <dt class="col-md-3">{% trans "Non-trainable params" %}</dt>
                 <dd class="col-md-9">{{ version.nb_non_trainable|intcomma }}</dd>
+                {% if request.user.is_staff %}
+                    <dt class="col-md-3">{% trans "State" %}</dt>
+                    <dd class="col-md-9">{{ version.state }}</dd>
+                {% endif %}
                 <dt class="col-md-3">{% trans "Results" %}</dt>
                 <dd class="col-md-9">
                     <ul>
@@ -76,6 +75,13 @@
                 </dd>
             </dl>
         </div>
+        {% if nnmodel.uploader == request.user or request.user.is_staff %}
+            <div class="col-md-3">
+                <div class="float-right">
+                    <a href="{% url "nnmodels:version_update" version.nnmodel.slug version.pk %}" class="btn btn-primary" role="button">{% trans "Update Version" %}</a>
+                </div>
+            </div>
+        {% endif %}
     </div>
     {% if version.trainhistory_file %}
         <div class="row">
