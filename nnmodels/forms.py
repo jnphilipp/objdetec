@@ -27,6 +27,9 @@ class NNModelForm(forms.ModelForm):
         super(NNModelForm, self).__init__(*args, **kwargs)
         self.fields['uploader'].widget = forms.HiddenInput()
 
+    def clean_name(self):
+        return self.cleaned_data['name'] or None
+
     class Meta:
         model = NNModel
         fields = ('name', 'description', 'public', 'uploader')
@@ -36,6 +39,9 @@ class VersionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(VersionForm, self).__init__(*args, **kwargs)
         self.fields['nnmodel'].widget = forms.HiddenInput()
+
+    def clean_name(self):
+        return self.cleaned_data['name'] or None
 
     class Meta:
         model = Version
