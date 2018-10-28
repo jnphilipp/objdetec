@@ -36,22 +36,29 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
-from django.views.generic.base import RedirectView
+from django.utils.translation import ugettext_lazy as _
+from django.views.generic.base import RedirectView, TemplateView
 
 from . import views
+from .decorators import piwik
 
-admin.site.site_header = 'objdetec administration'
+admin.site.site_header = _('objdetec administration')
 
 
 urlpatterns = [
-    path('', views.dashboard, name='dashboard'),
-    path('legal_notice/', views.legal_notice, name='legal_notice'),
-    path('privacy_policy/', views.privacy_policy, name='privacy_policy'),
+    path('', views.DashboardView.as_view(), name='dashboard'),
+    path('legal_notice/', piwik('Legal notice • objdetec')(
+        TemplateView.as_view(template_name='objdetec/legal_notice.html')),
+         name='legal_notice'),
+    path('privacy_policy/', piwik('Privacy policy • objdetec')(
+        TemplateView.as_view(template_name='objdetec/privacy_policy.html')),
+         name='privacy_policy'),
 
     path('admin/', admin.site.urls),
     path('images/', include('images.urls')),
     path('nnmodels/', include('nnmodels.urls')),
     path('profile/', include('profiles.urls')),
+    path('results/', include('results.urls')),
 
     path('favicon.ico', RedirectView.as_view(url='/static/images/icon.png')),
 ]
