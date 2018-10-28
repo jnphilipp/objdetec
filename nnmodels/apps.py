@@ -24,3 +24,6 @@ class NNModelsConfig(AppConfig):
     name = 'nnmodels'
     verbose_name = _('NN Model')
     verbose_name_plural = _('NN Models')
+
+    def ready(self):
+        from . import signals
