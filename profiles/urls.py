@@ -28,7 +28,7 @@ app_name = 'profiles'
 urlpatterns = [
     path('', RedirectView.as_view(pattern_name='profiles:profile'),
          name='index'),
-    path('profile/', views.profile, name='profile'),
+    path('profile/', views.UpdateView.as_view(), name='profile'),
 
     path('password/',
          piwik('Password change • Profile • objdetec')(
