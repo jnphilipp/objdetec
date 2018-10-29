@@ -1,0 +1,102 @@
+{% extends "objdetec/base.html" %}
+{% load humanize i18n objdetec results %}
+
+
+{% block extrahead %}
+<style type="text/css">
+    @media (min-width: 576px) {
+        .card-columns {
+            column-count: 2;
+        }
+    }
+    @media (min-width: 768px) {
+        .card-columns {
+            column-count: {% if user.is_staff %}2{% else %}3{% endif %};
+        }
+    }
+    @media (min-width: 992px) {
+        .card-columns {
+            column-count: {% if user.is_staff %}3{% else %}4{% endif %};
+        }
+    }
+    @media (min-width: 1200px) {
+        .card-columns {
+            column-count: {% if user.is_staff %}4{% else %}5{% endif %};
+        }
+    }
+</style>
+{% endblock %}
+
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url "dashboard" %}">{% trans "Dashboard" %}</a></li>
+<li class="breadcrumb-item"><a href="{% url "images:image_list" %}">{% trans "Images" %}</a></li>
+<li class="breadcrumb-item active" aria-current="page">{{ set.name }}</li>
+{% endblock %}
+
+
+{% block content %}
+<div class="row mt-2">
+    <div class="col-md-7 offset-md-1">
+        <dl class="row">
+            {% if user.is_authenticated and set.uploader == user %}
+                <dt class="col-md-2">{% trans "Public" %}</dt>
+                <dd class="col-md-10">{% if set.public %}{% trans "yes" %}{% else %}{% trans "no" %}{% endif %}</dd>
+            {% endif %}
+            {% if user.is_staff %}
+                <dt class="col-md-2">{% trans "Uploader" %}</dt>
+                <dd class="col-md-10">{{ set.uploader }}</dd>
+            {% endif %}
+        </dl>
+    </div>
+    {% if user.is_authenticated and set.uploader == user %}
+        <div class="col-md-3">
+            <div class="float-right">
+                <a href="{% url "images:set_update" set.slug %}" class="btn btn-primary" role="button">{% trans "Update image set" %}</a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <h3>#{% trans "Images" %}</h3>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-{% if user.is_staff %}7{% else %}10{% endif %} offset-md-1">
+        <div class="card-columns">
+            {% for image in images %}
+                <div class="card border-dark mb-3" style="max-width: 18rem;">
+                    <img class="card-img-top" src="{{ image.image.url }}" alt="{{ image.name }}">
+                    <div class="card-body text-dark">
+                        <p class="card-text"><a href="{% url "images:image_detail" image.slug %}">
+                            {{ image.name }}
+                            <span class="badge badge-primary badge-pill">{{ image.results.count }}</span>
+                        </a></p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% if not result and user.is_staff %}
+        <div class="col-md-3">
+            <div class="list-group list-group-flush">
+                <h4 class="list-group-item">#{% trans "Start a job" %}</h4>
+                {% for nnmodel in nnmodels %}
+                    <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-toggle="collapse" href="#collapse{{ nnmodel.slug }}" role="button" aria-expanded="false" aria-controls="collapse{{ nnmodel.slug }}">
+                        {{ nnmodel.name }}
+                        <span class="badge badge-primary badge-pill">{{ nnmodel.versions.count }}</span>
+                    </a>
+
+                    <div class="collapse mt-1 mb-1" id="collapse{{ nnmodel.slug }}">
+                        {% for version in nnmodel.versions.all %}
+                            <a class="list-group-item list-group-item-action" href="{% url "results:job_create_set" version.pk set.pk %}">{{ version.name }}</a>
+                        {% endfor %}
+                    </div>
+
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

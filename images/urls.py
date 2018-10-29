@@ -17,15 +17,26 @@
 # along with objdetec.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.urls import path
-from . import views
+from .views import image, set
 
 
 app_name = 'images'
 urlpatterns = [
-    path('image/', views.list, name='images'),
-    path('image/add/', views.add, name='image_add'),
-    path('image/<slug:slug>/', views.detail, name='image'),
-    path('image/<slug:slug>/edit/', views.edit, name='image_edit'),
+    path('image/', image.ListView.as_view(), name='image_list'),
+    path('image/<int:page>/', image.ListView.as_view()),
+    path('image/create/', image.CreateView.as_view(),
+         name='image_create'),
+    path('image/<slug:slug>/', image.DetailView.as_view(),
+         name='image_detail'),
+    path('image/<slug:slug>/update/', image.UpdateView.as_view(),
+         name='image_update'),
+
+    path('set/create/', set.CreateView.as_view(), name='set_create'),
+    path('set/<slug:slug>/', set.DetailView.as_view(), name='set_detail'),
+    path('image/<slug:slug>/result/', image.DetailView.as_view(),
+         name='image_results'),
     path('image/<slug:slug>/result/<int:result_id>/',
-         views.result, name='image_result'),
+         image.DetailView.as_view(), name='image_result'),
+    path('set/<slug:slug>/update/', set.UpdateView.as_view(),
+         name='set_update'),
 ]

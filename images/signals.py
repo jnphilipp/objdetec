@@ -16,4 +16,15 @@
 # You should have received a copy of the GNU General Public License
 # along with objdetec.  If not, see <http://www.gnu.org/licenses/>.
 
-from .base import list, detail, add, edit
+import os
+
+from django.conf import settings
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
+
+from .models import Image
+
+
+@receiver(pre_delete, sender=Image)
+def delete_files(sender, instance, **kwargs):
+    os.remove(os.path.join(settings.MEDIA_ROOT, instance.image.name))

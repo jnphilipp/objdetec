@@ -24,3 +24,6 @@ class ImagesConfig(AppConfig):
     name = 'images'
     verbose_name = _('Image')
     verbose_name_plural = _('Images')
+
+    def ready(self):
+        from . import signals

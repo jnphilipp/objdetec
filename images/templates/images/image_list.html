@@ -1,0 +1,71 @@
+{% extends "objdetec/base.html" %}
+{% load bootstrap i18n %}
+
+
+{% block extrahead %}
+<style type="text/css">
+    @media (min-width: 576px) {
+        .card-columns {
+            column-count: 2;
+        }
+    }
+    @media (min-width: 768px) {
+        .card-columns {
+            column-count: 3;
+        }
+    }
+    @media (min-width: 992px) {
+        .card-columns {
+            column-count: 4;
+        }
+    }
+    @media (min-width: 1200px) {
+        .card-columns {
+            column-count: 5;
+        }
+    }
+</style>
+{% endblock %}
+
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url "dashboard" %}">{% trans "Dashboard" %}</a></li>
+<li class="breadcrumb-item active" aria-current="page">{% trans "Images" %}</li>
+{% endblock %}
+
+
+{% block content %}
+{% if user.is_authenticated %}
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <div class="float-right">
+            <a href="{% url "images:image_create" %}" class="btn btn-primary" role="button">{% trans "Upload image" %}</a>
+            <a href="{% url "images:set_create" %}" class="btn btn-primary" role="button">{% trans "Create image set" %}</a>
+        </div>
+    </div>
+</div>
+{% endif %}
+<div class="row mt-2">
+    <div class="col-md-10 offset-md-1">
+        <div class="card-columns">
+            {% for image in images %}
+                <div class="card border-dark mb-3" style="max-width: 18rem;">
+                    <img class="card-img-top" src="{{ image.image.url }}" alt="{{ image.name }}">
+                    <div class="card-body text-dark">
+                        <p class="card-text"><a href="{% url "images:image_detail" image.slug %}">{{ image.name }}</a></p>
+                    </div>
+                    {% if image.set %}
+                        <div class="card-footer">
+                            <b>{% trans "Set" %}:</b>
+                            <a href="{% url "images:set_detail" image.set.slug %}">{{ image.set.name }}</a>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        {% trans "Images" as pagination_title %}
+        {% url "images:image_list" as base_path %}
+        {% pagination paginator page_obj base_path pagination_title o=o %}
+    </div>
+</div>
+{% endblock %}

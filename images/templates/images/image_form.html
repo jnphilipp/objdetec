@@ -2,14 +2,25 @@
 {% load bootstrap i18n %}
 
 
+{% block extrahead %}
+<script type="text/javascript">
+    $(function() {
+        $("#id_set").select2({
+            allowClear: true,
+        });
+    });
+</script>
+{% endblock %}
+
+
 {% block breadcrumbs %}
 <li class="breadcrumb-item"><a href="{% url "dashboard" %}">{% trans "Dashboard" %}</a></li>
-<li class="breadcrumb-item"><a href="{% url "images:images" %}">{% trans "Images" %}</a></li>
+<li class="breadcrumb-item"><a href="{% url "images:image_list" %}">{% trans "Images" %}</a></li>
 {% if image %}
     <li class="breadcrumb-item"><a href="{% url "images:image" image.slug %}">{{ image.name }}</a></li>
     <li class="breadcrumb-item active" aria-current="page">{% trans "Edit" %}</li>
 {% else %}
-    <li class="breadcrumb-item active" aria-current="page">{% trans "Add" %}</li>
+    <li class="breadcrumb-item active" aria-current="page">{% trans "Create" %}</li>
 {% endif %}
 {% endblock %}
 

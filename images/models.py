@@ -21,13 +21,51 @@ import os
 from django.conf import settings
 from django.db import models
 from django.template.defaultfilters import slugify
+from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from objdetec.fields import SingleLineTextField
 
 
 def get_image_path(instance, filename):
     name = slugify(instance.name) + os.path.splitext(filename)[1]
-    return os.path.join('images', name)
+    if instance.set:
+        return os.path.join('images', slugify(instance.set.name),
+                            slugify(instance.name), name)
+    return os.path.join('images', slugify(instance.name), name)
+
+
+class Set(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True,
+                                      verbose_name=_('Created at'))
+    updated_at = models.DateTimeField(auto_now=True,
+                                      verbose_name=_('Updated at'))
+
+    slug = models.SlugField(unique=True, verbose_name=_('Slug'))
+    name = SingleLineTextField(unique=True, verbose_name=_('Name'))
+    public = models.BooleanField(default=True, verbose_name=_('Public'))
+    uploader = models.ForeignKey(settings.AUTH_USER_MODEL, models.CASCADE,
+                                 related_name='sets',
+                                 verbose_name=_('Uploader'))
+
+    def get_absolute_url(self):
+        return reverse('images:set_detail', args=[self.slug])
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        else:
+            orig = Set.objects.get(pk=self.pk)
+            if orig.name != self.name:
+                self.slug = slugify(self.name)
+        super(Set, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ('name',)
+        verbose_name = _('Set')
+        verbose_name_plural = _('Sets')
 
 
 class Image(models.Model):
@@ -44,6 +82,11 @@ class Image(models.Model):
     uploader = models.ForeignKey(settings.AUTH_USER_MODEL, models.CASCADE,
                                  related_name='images',
                                  verbose_name=_('Uploader'))
+    set = models.ForeignKey(Set, models.SET_NULL, blank=True, null=True,
+                            related_name='images', verbose_name=_('Set'))
+
+    def get_absolute_url(self):
+        return reverse('images:image_detail', args=[self.slug])
 
     def save(self, *args, **kwargs):
         if not self.slug:

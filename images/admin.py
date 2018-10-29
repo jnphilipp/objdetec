@@ -19,13 +19,22 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
-from .models import Image
+from .models import Image, Set
 
 
 @admin.register(Image)
 class ImageAdmin(admin.ModelAdmin):
     fieldsets = [(None, {'fields': ['slug', 'name', 'public', 'image',
-                                    'uploader']})]
+                                    'uploader', 'set']})]
+    list_display = ('name', 'public', 'uploader', 'set')
+    list_filter = ('public', 'uploader', 'set')
+    readonly_fields = ('slug',)
+    search_fields = ('name',)
+
+
+@admin.register(Set)
+class SetAdmin(admin.ModelAdmin):
+    fieldsets = [(None, {'fields': ['slug', 'name', 'public', 'uploader']})]
     list_display = ('name', 'public', 'uploader')
     list_filter = ('public', 'uploader')
     readonly_fields = ('slug',)
