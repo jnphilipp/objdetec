@@ -1,4 +1,3 @@
-
 # -*- coding: utf-8 -*-
 # Copyright (C) 2018 Nathanael Philipp (jnphilipp) <mail@jnphilipp.org>
 #
@@ -18,17 +17,19 @@
 # along with objdetec.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.core.mail import mail_admins
-from django.core.management.base import BaseCommand
 from nnmodels.models import Version
+from objdetec.management.base import SingleInstanceCommand
 
 
-class Command(BaseCommand):
+class Command(SingleInstanceCommand):
     help = 'Run fsm transition on Versions.'
 
     def add_arguments(self, parser):
         pass
 
     def handle(self, *args, **options):
+        self._run_once()
+
         msg = ''
         for version in Version.objects.filter(state='new'):
             self.stdout.write('* %s' % version)
