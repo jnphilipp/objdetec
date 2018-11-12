@@ -16,6 +16,15 @@
 # You should have received a copy of the GNU General Public License
 # along with objdetec.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.shortcuts import render
+import os
 
-# Create your views here.
+from django.conf import settings
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
+
+from .models import Output
+
+
+@receiver(pre_delete, sender=Output)
+def delete_files(sender, instance, **kwargs):
+    os.remove(os.path.join(settings.MEDIA_ROOT, instance.p.name))

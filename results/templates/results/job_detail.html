@@ -1,0 +1,45 @@
+{% extends "objdetec/base.html" %}
+{% load i18n results %}
+
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url "dashboard" %}">{% trans "Dashboard" %}</a></li>
+<li class="breadcrumb-item"><a href="{% url "results:job_list" %}">{% trans "Jobs" %}</a></li>
+<li class="breadcrumb-item active" aria-current="page">{{ job.pk }}</li>
+{% endblock %}
+
+
+{% block content %}
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <dl class="row">
+            <dt class="col-md-3">{% trans "State" %}</dt>
+            <dd class="col-md-9"><code>{{ job.state }}</code></dd>
+            <dt class="col-md-3">{% trans "Text" %}</dt>
+            <dd class="col-md-9"><pre>{{ job.text|default_if_none:"" }}</pre></dd>
+            <dt class="col-md-3">{% trans "Overlap" %}</dt>
+            <dd class="col-md-9">{{ job.overlap }}</dd>
+            {% if request.user.is_staff %}
+                <dt class="col-md-3">{% trans "User" %}</dt>
+                <dd class="col-md-9">{{ job.user }}</dd>
+            {% endif %}
+            <dt class="col-md-3">{% trans "Model" %}</dt>
+            <dd class="col-md-9"><a href="{% url "nnmodels:version_detail" job.version.nnmodel.slug job.version.pk %}">{{ job.version }}</a></dd>
+            <dt class="col-md-3">{% trans "Image" %}</dt>
+            <dd class="col-md-9"><a href="{% url "images:image_detail" job.image.slug %}">{{ job.image }}</a></dd>
+        </dl>
+    </div>
+</div>
+{% if job.result %}
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <h4>#{% trans "Result" %}</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            {% result job.result %}
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

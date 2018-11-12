@@ -19,14 +19,27 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
-from .models import Output, Result
+from .models import Job, Output, Result
+
+
+@admin.register(Job)
+class JobAdmin(admin.ModelAdmin):
+    fieldsets = [
+        (None, {'fields': ['user', 'version', 'image', 'state', 'text']}),
+        (_('Config'), {'fields': ['overlap']}),
+        (_('Result'), {'fields': ['result']}),
+    ]
+    list_display = ('user', 'version', 'image', 'state')
+    list_filter = ('state', 'user', 'version', 'image')
+    search_fields = ('user__first_name', 'user__last_name',
+                     'version__nnmodel__name', 'version__name', 'image__name')
 
 
 @admin.register(Output)
 class OutputAdmin(admin.ModelAdmin):
-    fieldsets = [(None, {'fields': ['name', 't', 'p']})]
-    list_display = ('name', 't', 'updated_at')
-    list_filter = ('t',)
+    fieldsets = [(None, {'fields': ['name', 't', 'p', 'result']})]
+    list_display = ('name', 't', 'result', 'updated_at')
+    list_filter = ('t', 'result')
     search_fields = ('name',)
 
 
@@ -34,10 +47,8 @@ class OutputAdmin(admin.ModelAdmin):
 class ResultAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['version', 'image']}),
-        (_('Outputs'), {'fields': ['outputs']}),
         (_('Config'), {'fields': ['overlap']}),
     ]
-    filter_horizontal = ('outputs',)
     list_display = ('version', 'image', 'updated_at')
     list_filter = ('version', 'image')
     search_fields = ('version__nnmodel__name', 'version__name',

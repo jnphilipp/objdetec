@@ -1,0 +1,45 @@
+{% load i18n objdetec %}
+
+<div id="results">
+    <div class="row">
+        <div class="col">
+            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                <div class="btn-group mr-2" role="group" aria-label="Image group">
+                    <button type="button" class="btn btn-secondary" data-toggle="collapse" data-target="#collapseImage" aria-expanded="true" aria-controls="collapseImage">{% trans "Image" %}</button>
+                </div>
+                {% for output in outputs %}
+                    <div class="btn-group mr-2" role="group" aria-label="{{ output.name }} group">
+                        {% if output|get_item:"t" == "img" %}
+                            <button type="button" class="btn btn-secondary collapsed" data-toggle="collapse" data-target="#collapseOutput{{ forloop.counter }}" aria-expanded="false" aria-controls="collapseOutput{{ forloop.counter }}">{{ output|get_item:"name" }}</button>
+                        {% elif output|get_item:"t" == "class" %}
+                            <button type="button" class="btn btn-secondary disabled">{{ output|get_item:"name" }}</button>
+                            {% for p in output|get_item:"p"|dictsort:"c" %}
+                                <button type="button" class="btn btn-secondary collapsed" data-toggle="collapse" data-target="#collapseOutput{{ forloop.parentloop.counter }}-{{ p|get_item:"c" }}" aria-expanded="false" aria-controls="collapseOutput{{ forloop.parentloop.counter }}-{{ p|get_item:"c" }}">{{ p|get_item:"c" }}</button>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col">
+            <div id="collapseImage" class="collapse show" aria-labelledby="collapseImage" data-parent="#results">
+                <img class="img-fluid img-thumbnail" src="{{ image_url }}">
+            </div>
+            {% for output in outputs %}
+                {% if output|get_item:"t" == "img" %}
+                    <div id="collapseOutput{{ forloop.counter }}" class="collapse" aria-labelledby="collapseOutput{{ forloop.counter }}" data-parent="#results">
+                        <img class="img-fluid img-thumbnail" src="{{ output|get_item:"p" }}">
+                    </div>
+                {% elif output|get_item:"t" == "class" %}
+                    {% for p in output|get_item:"p"|dictsort:"c" %}
+                        <div id="collapseOutput{{ forloop.parentloop.counter }}-{{ p|get_item:"c" }}" class="collapse" aria-labelledby="collapseOutput{{ forloop.parentloop.counter }}-{{ p|get_item:"c" }}" data-parent="#results">
+                            <img class="img-fluid img-thumbnail" src="{{ p|get_item:"img" }}">
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>

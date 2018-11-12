@@ -16,14 +16,16 @@
 # You should have received a copy of the GNU General Public License
 # along with objdetec.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.apps import AppConfig
-from django.utils.translation import ugettext_lazy as _
+from django.urls import path
+from .views import job
 
 
-class ResultsConfig(AppConfig):
-    name = 'results'
-    verbose_name = _('Result')
-    verbose_name_plural = _('Results')
-
-    def ready(self):
-        from . import signals
+app_name = 'results'
+urlpatterns = [
+    path('job/', job.ListView.as_view(), name='job_list'),
+    path('job/create/<int:version>/set/<int:set>/',
+         job.SetCreateView.as_view(), name='job_create_set'),
+    path('job/create/<int:version>/image/<int:image>/',
+         job.ImageCreateView.as_view(), name='job_create_image'),
+    path('job/<int:pk>/', job.DetailView.as_view(), name='job_detail'),
+]

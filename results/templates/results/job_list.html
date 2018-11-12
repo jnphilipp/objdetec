@@ -1,0 +1,40 @@
+{% extends "objdetec/base.html" %}
+{% load i18n %}
+
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url "dashboard" %}">{% trans "Dashboard" %}</a></li>
+<li class="breadcrumb-item active" aria-current="page">{% trans "Jobs" %}</li>
+{% endblock %}
+
+
+{% block content %}
+<div class="row mt-2">
+    <div class="col-md-10 offset-md-1">
+        <div class="table-responsive">
+            <table class="table table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th>{% trans "Id" %}</th>
+                        {% if request.user.is_staff %}<th>{% trans "User" %}</th>{% endif%}
+                        <th>{% trans "Version" %}</th>
+                        <th>{% trans "Image" %}</th>
+                        <th>{% trans "State" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for job in jobs %}
+                        <tr>
+                            <th><a href="{% url "results:job_detail" job.pk %}">{{ job.pk }}</a></th>
+                            {% if request.user.is_staff %}<td>{{ job.user }}</td>{% endif%}
+                            <td><a href="{% url "nnmodels:version_detail" job.version.nnmodel.slug job.version.pk %}">{{ job.version }}</a></td>
+                            <td><a href="{% url "images:image_detail" job.image.slug %}">{{ job.image.name }}</a></td>
+                            <td><code>{{ job.state }}</code></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
