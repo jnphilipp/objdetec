@@ -52,7 +52,10 @@
                 <div class="card border-dark mb-3" style="max-width: 18rem;">
                     <img class="card-img-top" src="{{ image.image.url }}" alt="{{ image.name }}">
                     <div class="card-body text-dark">
-                        <p class="card-text"><a href="{% url "images:image_detail" image.slug %}">{{ image.name }}</a></p>
+                        <p class="card-text"><a href="{% url "images:image_detail" image.slug %}">
+                            {{ image.name }}
+                            <span class="badge badge-primary badge-pill">{{ image.results.count }}</span>
+                        </a></p>
                     </div>
                     {% if image.set %}
                         <div class="card-footer">
