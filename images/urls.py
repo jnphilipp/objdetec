@@ -28,8 +28,8 @@ urlpatterns = [
          name='image_create'),
     path('image/<slug:slug>/', image.DetailView.as_view(),
          name='image_detail'),
-    path('image/<slug:slug>/update/', image.UpdateView.as_view(),
-         name='image_update'),
+    path('image/<slug:slug>/edit/', image.UpdateView.as_view(),
+         name='image_edit'),
 
     path('set/create/', set.CreateView.as_view(), name='set_create'),
     path('set/<slug:slug>/', set.DetailView.as_view(), name='set_detail'),
@@ -37,6 +37,6 @@ urlpatterns = [
          name='image_results'),
     path('image/<slug:slug>/result/<int:result_id>/',
          image.DetailView.as_view(), name='image_result'),
-    path('set/<slug:slug>/update/', set.UpdateView.as_view(),
-         name='set_update'),
+    path('set/<slug:slug>/edit/', set.UpdateView.as_view(),
+         name='set_edit'),
 ]

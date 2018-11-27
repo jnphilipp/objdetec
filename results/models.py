@@ -27,7 +27,6 @@ from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django_fsm import FSMField, transition
-from keras.preprocessing import image
 from objdetec.fields import SingleLineTextField
 from PIL import Image
 from tempfile import NamedTemporaryFile
@@ -116,6 +115,7 @@ class Job(models.Model):
                 on_error='failed')
     def predict(self, batch_size, data_format):
         from nnmodels.keras_model import predict_image
+        from keras.preprocessing.image import array_to_img
 
         def create_output(img, name, result):
             with NamedTemporaryFile(mode='bw+') as f:
@@ -137,7 +137,7 @@ class Job(models.Model):
                                        overlap=self.overlap)
 
         for i in range(len(outputs)):
-            if outputs[i]['t'] == 'class':
+            if outputs[i]['t'] == 'class' or outputs[i]['t'] == 'multi':
                 if data_format == 'channels_first':
                     nb_classes = outputs[i]['img'].shape[0]
                 elif data_format == 'channels_last':

@@ -32,16 +32,15 @@ class Command(SingleInstanceCommand):
 
         msg = ''
         for version in Version.objects.filter(state='new'):
-            self.stdout.write('* %s' % version)
+            self.stdout.write('* %s:' % version, ending='')
 
             try:
                 version.update_from_model()
-                self.stdout.write(self.style.SUCCESS('* %s: success.' %
-                                                     version))
+                self._success(' success')
                 msg += '* %s: done.\n' % version
             except Exception as e:
-                self.stdout.write(self.style.ERROR('* %s: failed.' % version))
-                self.stderr.write(self.style.ERROR('    %s' % e))
+                self._error(' failed.')
+                self._error('    %s' % e)
                 msg += '* %s: failed\n' % version
                 msg += '    %s\n' % e
             version.save()

@@ -107,13 +107,19 @@ def predict_image(version, image_path, batch_size, overlap, data_format=None):
         pos = min(name.index('/') if '/' in name else len(name),
                   name.index(':') if ':' in name else len(name))
         name = name[:pos]
+        activation = model.get_layer(name).activation.__name__.lower()
         outputs.append({'name': name, 'shape': tshape})
 
         if len(tshape) == 2:
-            outputs[i]['t'] = 'class'
+            if activation == 'softmax':
+                outputs[i]['t'] = 'class'
+            else:
+                outputs[i]['t'] = 'multi'
+
             nb_classes = tshape[1]
             if nb_classes is None:
                 nb_classes = model.get_layer(name).output_shape[1]
+            nb_classes = int(nb_classes)
             metrics += ['%s:%s' % (name, i) for i in range(nb_classes)]
 
             if data_format == 'channels_first':
@@ -122,7 +128,11 @@ def predict_image(version, image_path, batch_size, overlap, data_format=None):
                 shape = (inputs['nb_r'], inputs['nb_c'], nb_classes)
 
         elif len(tshape) == 4:
-            outputs[i]['t'] = 'img'
+            if activation == 'softmax':
+                outputs[i]['t'] = 'class'
+            else:
+                outputs[i]['t'] = 'img'
+
             shape = (inputs['nb_r'], inputs['nb_c']) + tuple(tshape[1:])
         outputs[i]['p'] = np.zeros(shape)
 
