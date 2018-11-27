@@ -30,8 +30,8 @@ urlpatterns = [
          name='nnmodel_create'),
     path('nnmodel/<slug:slug>/', nnmodel.DetailView.as_view(),
          name='nnmodel_detail'),
-    path('nnmodel/<slug:slug>/update/', nnmodel.UpdateView.as_view(),
-         name='nnmodel_update'),
+    path('nnmodel/<slug:slug>/edit/', nnmodel.UpdateView.as_view(),
+         name='nnmodel_edit'),
 
     path('nnmodel/<slug:slug>/create/', version.CreateView.as_view(),
          name='version_create'),
@@ -44,8 +44,8 @@ urlpatterns = [
     path('nnmodel/<slug:slug>/<int:pk>/plot/',
          piwik('Plot • Version • NN Model • N Models • objdetec')(
             version.DetailView.as_view()), name='version_plot'),
-    path('nnmodel/<slug:slug>/<int:pk>/update/',
-         version.UpdateView.as_view(), name='version_update'),
+    path('nnmodel/<slug:slug>/<int:pk>/edit/',
+         version.UpdateView.as_view(), name='version_edit'),
     path('nnmodel/<slug:slug>/<int:pk>/charts/trainhistory/',
          version.charts.trainhistory, name='version_chart_trainhistory'),
 ]

@@ -17,7 +17,7 @@
 <li class="breadcrumb-item"><a href="{% url "dashboard" %}">{% trans "Dashboard" %}</a></li>
 <li class="breadcrumb-item"><a href="{% url "images:image_list" %}">{% trans "Images" %}</a></li>
 {% if image %}
-    <li class="breadcrumb-item"><a href="{% url "images:image" image.slug %}">{{ image.name }}</a></li>
+    <li class="breadcrumb-item"><a href="{% url "images:image_detail" image.slug %}">{{ image.name }}</a></li>
     <li class="breadcrumb-item active" aria-current="page">{% trans "Edit" %}</li>
 {% else %}
     <li class="breadcrumb-item active" aria-current="page">{% trans "Create" %}</li>

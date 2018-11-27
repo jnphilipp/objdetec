@@ -78,7 +78,7 @@
         {% if nnmodel.uploader == request.user or request.user.is_staff %}
             <div class="col-md-3">
                 <div class="float-right">
-                    <a href="{% url "nnmodels:version_update" version.nnmodel.slug version.pk %}" class="btn btn-primary" role="button">{% trans "Update Version" %}</a>
+                    <a href="{% url "nnmodels:version_edit" version.nnmodel.slug version.pk %}" class="btn btn-outline-primary" role="button">{% trans "Edit Version" %}</a>
                 </div>
             </div>
         {% endif %}

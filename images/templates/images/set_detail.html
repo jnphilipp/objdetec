@@ -52,7 +52,7 @@
     {% if user.is_authenticated and set.uploader == user %}
         <div class="col-md-3">
             <div class="float-right">
-                <a href="{% url "images:set_update" set.slug %}" class="btn btn-primary" role="button">{% trans "Update image set" %}</a>
+                <a href="{% url "images:set_edit" set.slug %}" class="btn btn-outline-primary" role="button">{% trans "Edit image set" %}</a>
             </div>
         </div>
     {% endif %}
